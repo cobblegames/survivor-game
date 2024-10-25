@@ -1,82 +1,120 @@
-
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    private bool gameIsStarted;
+
+    private SpatialGroupManager spatialGroupManager;
 
     // Stats
-    int health = 100;
-    int maxHealth = 100;
-    float movementSpeed = 4f;
+    private int health = 100;
 
+    private float movementSpeed = 4f;
 
     // Spatial groups
-    int spatialGroup = -1;
-    public int SpatialGroup { get { return spatialGroup; } }
+    private int spatialGroup = -1;
+
+    public int SpatialGroup
+    { get { return spatialGroup; } }
 
     // Taking damage from enemy
-    int takeDamageEveryXFrames = 0;
-    int takeDamageEveryXFramesCD = 10;
-    float hitBoxRadius = 0.4f;
+    private int takeDamageEveryXFrames = 0;
+
+    private int takeDamageEveryXFramesCD = 10;
+    private float hitBoxRadius = 0.4f;
 
     // Nearest enemy position (for weapons)
-    Vector2 nearestEnemyPosition = Vector2.zero;
+    private Vector2 nearestEnemyPosition = Vector2.zero;
+
     public Vector2 NearestEnemyPosition
     {
         get { return nearestEnemyPosition; }
         set { nearestEnemyPosition = value; }
     }
 
-    bool noNearbyEnemies = false; // shoot randomly
+    private bool noNearbyEnemies = false;
+
+    private WaitForEndOfFrame waitForEndOfFrame = new WaitForEndOfFrame();
+
     public bool NoNearbyEnemies
     {
         get { return noNearbyEnemies; }
         set { noNearbyEnemies = value; }
     }
 
-    void Start()
+    public void Initialize(SpatialGroupManager manager)
     {
-        spatialGroup = GameController.instance.GetSpatialGroup(transform.position.x, transform.position.y); // GET spatial group
-    
+        this.spatialGroupManager = manager;
+
+        spatialGroup = spatialGroupManager.GetSpatialGroup(transform.position.x, transform.position.y);
     }
 
-    void FixedUpdate()
+    private void OnEnable()
     {
-        Vector3 movementVector = Vector3.zero;
+        GameEvents.OnStartGame += Handle_StartGame;
+        GameEvents.OnStopGame += Handle_StopGame;
+    }
 
-        // WASD to move around
-        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow)) movementVector += Utils.V2toV3(new Vector2(0, 1));
-        if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)) movementVector += Utils.V2toV3(new Vector2(-1, 0));
-        if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow)) movementVector += Utils.V2toV3(new Vector2(0, -1));
-        if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)) movementVector += Utils.V2toV3(new Vector2(1, 0));
+    private void OnDisable()
+    {
+        GameEvents.OnStartGame -= Handle_StartGame;
+        GameEvents.OnStopGame -= Handle_StopGame;
+    }
 
-        transform.position += movementVector.normalized * Time.deltaTime * movementSpeed;
+    private void Handle_StartGame()
+    {
+        gameIsStarted = true;
 
-        // Calculate nearest enemy direction
-        spatialGroup = GameController.instance.GetSpatialGroup(transform.position.x, transform.position.y); // GET spatial group
-        CalculateNearestEnemyDirection();
+        StartCoroutine(PlayerMainLoop());
+    }
 
-        // Colliding with any enemy? Lose health?
-        takeDamageEveryXFrames++;
-        if (takeDamageEveryXFrames > takeDamageEveryXFramesCD)
+    private void Handle_StopGame()
+    {
+        gameIsStarted = false;
+        Destroy(gameObject);
+    }
+
+    private IEnumerator PlayerMainLoop()
+    {
+        while (gameIsStarted)
         {
-            CheckCollisionWithEnemy();
-            takeDamageEveryXFrames = 0;
+            Vector3 movementVector = Vector3.zero;
+
+            // WASD to move around
+            if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow)) movementVector += Utils.V2toV3(new Vector2(0, 1));
+            if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)) movementVector += Utils.V2toV3(new Vector2(-1, 0));
+            if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow)) movementVector += Utils.V2toV3(new Vector2(0, -1));
+            if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)) movementVector += Utils.V2toV3(new Vector2(1, 0));
+
+            transform.position += movementVector.normalized * Time.deltaTime * movementSpeed;
+
+            // Calculate nearest enemy direction
+            spatialGroup = spatialGroupManager.GetSpatialGroup(transform.position.x, transform.position.y); // GET spatial group
+            CalculateNearestEnemyDirection();
+
+            // Colliding with any enemy? Lose health?
+            takeDamageEveryXFrames++;
+            if (takeDamageEveryXFrames > takeDamageEveryXFramesCD)
+            {
+                CheckCollisionWithEnemy();
+                takeDamageEveryXFrames = 0;
+            }
+
+            yield return waitForEndOfFrame;
         }
     }
 
-    void CheckCollisionWithEnemy()
+    private void CheckCollisionWithEnemy()
     {
-        List<int> surroundingSpatialGroups = Utils.GetExpandedSpatialGroups(spatialGroup);
-        List<Enemy> surroundingEnemies = Utils.GetAllEnemiesInSpatialGroups(surroundingSpatialGroups);
+        List<int> surroundingSpatialGroups = spatialGroupManager.GetExpandedSpatialGroups(spatialGroup);
+        List<Enemy> surroundingEnemies = spatialGroupManager.GetAllEnemiesInSpatialGroups(surroundingSpatialGroups);
 
         foreach (Enemy enemy in surroundingEnemies)
-        // foreach (Enemy enemy in GameController.instance.enemySpatialGroups[spatialGroup])
         {
             if (enemy == null) continue;
 
-            // float distance = Mathf.Abs(transform.position.x - enemy.transform.position.x) + Mathf.Abs(transform.position.y - enemy.transform.position.y);
             float distance = Vector2.Distance(transform.position, enemy.transform.position);
             if (distance < hitBoxRadius)
             {
@@ -88,7 +126,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void CalculateNearestEnemyDirection()
+    private void CalculateNearestEnemyDirection()
     {
         // Just checks enemies in the same spatial group
         float minDistance = 100f;
@@ -96,10 +134,10 @@ public class PlayerController : MonoBehaviour
         bool foundATarget = false;
 
         List<int> spatialGroupsToSearch = new List<int>() { spatialGroup };
-        spatialGroupsToSearch = Utils.GetExpandedSpatialGroups(spatialGroup, 6);
+        spatialGroupsToSearch = spatialGroupManager.GetExpandedSpatialGroups(spatialGroup, 6);
 
         // Get all enemies
-        List<Enemy> nearbyEnemies = Utils.GetAllEnemiesInSpatialGroups(spatialGroupsToSearch);
+        List<Enemy> nearbyEnemies = spatialGroupManager.GetAllEnemiesInSpatialGroups(spatialGroupsToSearch);
 
         // No nearby enemies?
         if (nearbyEnemies.Count == 0)
@@ -131,22 +169,18 @@ public class PlayerController : MonoBehaviour
         }
     }
 
- 
-  
     public void ModifyHealth(int amount)
     {
         health += amount;
 
-      
         if (health <= 0)
         {
             KillPlayer();
         }
     }
 
-    void KillPlayer()
+    private void KillPlayer()
     {
-     
-        Destroy(gameObject);
+        GameEvents.StopGame();
     }
 }
