@@ -30,6 +30,6 @@ public class GameController : MonoBehaviour
         playerScript.Initialize(spatialGroupManager);
         spatialGroupManager.Initialize(playerScript);
 
-        GameEvents.StartGame();
+      
     }
 }
