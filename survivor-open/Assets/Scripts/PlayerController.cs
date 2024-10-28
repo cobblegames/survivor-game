@@ -76,6 +76,11 @@ public class PlayerController : MonoBehaviour
         Destroy(gameObject);
     }
 
+    private Vector3 V2toV3(Vector2 v)
+    {
+        return new Vector3(v.x, v.y, 0);
+    }
+
     private IEnumerator PlayerMainLoop()
     {
         while (gameIsStarted)
@@ -83,10 +88,10 @@ public class PlayerController : MonoBehaviour
             Vector3 movementVector = Vector3.zero;
 
             // WASD to move around
-            if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow)) movementVector += Utils.V2toV3(new Vector2(0, 1));
-            if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)) movementVector += Utils.V2toV3(new Vector2(-1, 0));
-            if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow)) movementVector += Utils.V2toV3(new Vector2(0, -1));
-            if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)) movementVector += Utils.V2toV3(new Vector2(1, 0));
+            if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow)) movementVector += V2toV3(new Vector2(0, 1));
+            if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)) movementVector += V2toV3(new Vector2(-1, 0));
+            if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow)) movementVector += V2toV3(new Vector2(0, -1));
+            if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)) movementVector += V2toV3(new Vector2(1, 0));
 
             transform.position += movementVector.normalized * Time.deltaTime * movementSpeed;
 

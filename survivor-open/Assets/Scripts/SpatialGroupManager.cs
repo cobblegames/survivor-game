@@ -142,58 +142,10 @@ public class SpatialGroupManager : MonoBehaviour
         // Run logic for all enemies in batch
         foreach (Enemy enemy in enemyBatches[batchID])
         {
-            if (enemy) RunEnemyLogic(enemy);
+            if (enemy) enemy.RunEnemyLogic();
         }
 
         // TODO: Clean out previous batch?
-    }
-
-    private void RunEnemyLogic(Enemy _enemy)
-    {
-        // Calculate direction
-        if(playerControllerReference!=null)
-        {
-            _enemy.currentMovementDirection = playerControllerReference.transform.position - _enemy.transform.position;
-            _enemy.currentMovementDirection.Normalize();
-
-            // Move towards the player //TODO: Maybe have this run every frame? (no, but can definetely be more)
-            _enemy.transform.position += _enemy.currentMovementDirection * Time.deltaTime * _enemy.movementSpeed;
-
-            // Push other nearby enemies away
-            PushNearbyEnemies(_enemy);
-
-            // Update spatial group
-            int newSpatialGroup = GetSpatialGroup(transform.position.x, transform.position.y); // GET spatial group
-            if (newSpatialGroup != _enemy.spatialGroup)
-            {
-                enemySpatialGroups[_enemy.spatialGroup].Remove(_enemy); // REMOVE from old spatial group
-
-                _enemy.spatialGroup = newSpatialGroup; // UPDATE current spatial group
-                enemySpatialGroups[_enemy.spatialGroup].Add(_enemy); // ADD to new spatial group
-            }
-        }
-       
-    }
-
-    private void PushNearbyEnemies(Enemy _enemy)
-    {
-        List<Enemy> currAreaEnemies = enemySpatialGroups[_enemy.spatialGroup].ToList(); // ONLY enemies in the same spatial group
-
-        // Check each enemy, if the distance between them is less than 0.2, push it away
-        foreach (Enemy enemy in currAreaEnemies) // ONLY enemies in the same spatial group
-        {
-            if (enemy == null) continue;
-            if (enemy == this) continue;
-
-            float distance = Mathf.Abs(transform.position.x - enemy.transform.position.x) + Mathf.Abs(transform.position.y - enemy.transform.position.y);
-            if (distance < 0.2f)
-            {
-                // Push this enemy away
-                Vector3 direction = transform.position - enemy.transform.position;
-                direction.Normalize();
-                enemy.transform.position -= direction * Time.deltaTime * _enemy.movementSpeed * 5;
-            }
-        }
     }
 
     public List<Enemy> GetAllEnemiesInSpatialGroups(List<int> spatialGroups)
@@ -204,11 +156,10 @@ public class SpatialGroupManager : MonoBehaviour
         {
             //Enemy enemy;
             enemySpatialGroups.TryGetValue(spatialGroup, out var enemy);
-            if (enemy!= null)
+            if (enemy != null)
             {
                 enemies.AddRange(enemy);
             }
-          
         }
 
         return enemies;
@@ -357,14 +308,14 @@ public class SpatialGroupManager : MonoBehaviour
 
         // Spatial group
         int spatialGroup = GetSpatialGroup(enemyGO.transform.position.x, enemyGO.transform.position.y);
-        enemyScript.spatialGroup = spatialGroup;
+        enemyScript.SpatialGroup = spatialGroup;
         AddToSpatialGroup(spatialGroup, enemyScript);
 
         // Batch for update logic
         enemyScript.BatchID = batchToBeAdded;
         enemyBatches[batchToBeAdded].Add(enemyScript);
 
-        enemyScript.Initialize(this); //Inject dependency
+        enemyScript.Initialize(this, playerControllerReference); //Inject dependency
     }
 
     private Vector2 GetPartitionCenterDynamic(int partition, float mapWidth, float mapHeight, int totalPartitions)

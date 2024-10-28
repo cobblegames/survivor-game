@@ -45,9 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a10b2aa1486149a4da3997a0bf7dc155, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementSpeed: 10
-  currentMovementDirection: {x: 0, y: 0, z: 0}
-  spatialGroup: 0
+  enemyData: {fileID: 11400000, guid: 1c8a1d00df84ff9469960605e54c0f7a, type: 2}
 --- !u!212 &69463228641788005
 SpriteRenderer:
   m_ObjectHideFlags: 0
