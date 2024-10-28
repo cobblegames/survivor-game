@@ -103,6 +103,7 @@ public class SpatialGroupManager : MonoBehaviour
         // Spawn 10,000 enemies
         int initEnemyCount = 10000;
         maxEnemyCount = 10000;
+
         for (int i = 0; i < initEnemyCount; i++)
         {
             SpawnEnemy();
