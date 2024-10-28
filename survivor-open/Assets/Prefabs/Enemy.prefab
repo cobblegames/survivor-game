@@ -46,6 +46,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movementSpeed: 10
+  currentMovementDirection: {x: 0, y: 0, z: 0}
   spatialGroup: 0
 --- !u!212 &69463228641788005
 SpriteRenderer:

@@ -91,16 +91,21 @@ public class PlayerController : MonoBehaviour
             transform.position += movementVector.normalized * Time.deltaTime * movementSpeed;
 
             // Calculate nearest enemy direction
-            spatialGroup = spatialGroupManager.GetSpatialGroup(transform.position.x, transform.position.y); // GET spatial group
-            CalculateNearestEnemyDirection();
-
-            // Colliding with any enemy? Lose health?
-            takeDamageEveryXFrames++;
-            if (takeDamageEveryXFrames > takeDamageEveryXFramesCD)
+            if (spatialGroupManager != null)
             {
-                CheckCollisionWithEnemy();
-                takeDamageEveryXFrames = 0;
+                spatialGroup = spatialGroupManager.GetSpatialGroup(transform.position.x, transform.position.y); // GET spatial group
+                CalculateNearestEnemyDirection();
+
+                // Colliding with any enemy? Lose health?
+                takeDamageEveryXFrames++;
+                if (takeDamageEveryXFrames > takeDamageEveryXFramesCD)
+                {
+                    CheckCollisionWithEnemy();
+                    takeDamageEveryXFrames = 0;
+                }
+
             }
+         
 
             yield return waitForEndOfFrame;
         }

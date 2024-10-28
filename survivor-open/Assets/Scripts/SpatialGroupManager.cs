@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 //! MIN HEAP FOR BATCH //
 public class BatchScore : System.IComparable<BatchScore>
@@ -128,7 +129,7 @@ public class SpatialGroupManager : MonoBehaviour
             }
 
             SpawnEnemies();
-            RunBatchLogic((int)(runLogicTimer * 50)); // runLogicTimer is the batchID, for that set of enemies
+            RunBatchLogic((int)(runLogicTimer * 1)); // runLogicTimer is the batchID, for that set of enemies
 
             yield return new WaitForEndOfFrame();
         }
@@ -150,24 +151,28 @@ public class SpatialGroupManager : MonoBehaviour
     private void RunEnemyLogic(Enemy _enemy)
     {
         // Calculate direction
-        _enemy.currentMovementDirection = playerControllerReference.transform.position - _enemy.transform.position;
-        _enemy.currentMovementDirection.Normalize();
-
-        // Move towards the player //TODO: Maybe have this run every frame? (no, but can definetely be more)
-        _enemy.transform.position += _enemy.currentMovementDirection * Time.deltaTime * _enemy.movementSpeed;
-
-        // Push other nearby enemies away
-        PushNearbyEnemies(_enemy);
-
-        // Update spatial group
-        int newSpatialGroup = GetSpatialGroup(transform.position.x, transform.position.y); // GET spatial group
-        if (newSpatialGroup != _enemy.spatialGroup)
+        if(playerControllerReference!=null)
         {
-            enemySpatialGroups[_enemy.spatialGroup].Remove(_enemy); // REMOVE from old spatial group
+            _enemy.currentMovementDirection = playerControllerReference.transform.position - _enemy.transform.position;
+            _enemy.currentMovementDirection.Normalize();
 
-            _enemy.spatialGroup = newSpatialGroup; // UPDATE current spatial group
-            enemySpatialGroups[_enemy.spatialGroup].Add(_enemy); // ADD to new spatial group
+            // Move towards the player //TODO: Maybe have this run every frame? (no, but can definetely be more)
+            _enemy.transform.position += _enemy.currentMovementDirection * Time.deltaTime * _enemy.movementSpeed;
+
+            // Push other nearby enemies away
+            PushNearbyEnemies(_enemy);
+
+            // Update spatial group
+            int newSpatialGroup = GetSpatialGroup(transform.position.x, transform.position.y); // GET spatial group
+            if (newSpatialGroup != _enemy.spatialGroup)
+            {
+                enemySpatialGroups[_enemy.spatialGroup].Remove(_enemy); // REMOVE from old spatial group
+
+                _enemy.spatialGroup = newSpatialGroup; // UPDATE current spatial group
+                enemySpatialGroups[_enemy.spatialGroup].Add(_enemy); // ADD to new spatial group
+            }
         }
+       
     }
 
     private void PushNearbyEnemies(Enemy _enemy)
@@ -197,7 +202,13 @@ public class SpatialGroupManager : MonoBehaviour
 
         foreach (int spatialGroup in spatialGroups)
         {
-            enemies.AddRange(enemySpatialGroups[spatialGroup]);
+            //Enemy enemy;
+            enemySpatialGroups.TryGetValue(spatialGroup, out var enemy);
+            if (enemy!= null)
+            {
+                enemies.AddRange(enemy);
+            }
+          
         }
 
         return enemies;

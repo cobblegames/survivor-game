@@ -11,7 +11,7 @@ public class Enemy : MonoBehaviour
         set { batchId = value; }
     }
 
-    public float movementSpeed = 3f;
+    public float movementSpeed = 1f;
     public Vector3 currentMovementDirection = Vector3.zero;
     public int spatialGroup = 0;
 
