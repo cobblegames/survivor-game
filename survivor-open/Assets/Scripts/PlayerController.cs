@@ -9,9 +9,13 @@ public class PlayerController : MonoBehaviour
     private SpatialGroupManager spatialGroupManager;
 
     // Stats
-    private int health = 100;
 
-    private float movementSpeed = 4f;
+   [SerializeField]  private PlayerData playerData;
+
+    private int currentHealth = 100;
+    private float currentMovementSpeed = 4f;
+    private float currentHitBoxRadius = 0.4f;
+
 
     // Spatial groups
     private int spatialGroup = -1;
@@ -23,7 +27,7 @@ public class PlayerController : MonoBehaviour
     private int takeDamageEveryXFrames = 0;
 
     private int takeDamageEveryXFramesCD = 10;
-    private float hitBoxRadius = 0.4f;
+   
 
     // Nearest enemy position (for weapons)
     private Vector2 nearestEnemyPosition = Vector2.zero;
@@ -49,6 +53,17 @@ public class PlayerController : MonoBehaviour
         this.spatialGroupManager = manager;
 
         spatialGroup = spatialGroupManager.GetSpatialGroup(transform.position.x, transform.position.y);
+
+        if (playerData != null) 
+        {
+            currentHealth = playerData.Health;
+            currentMovementSpeed = playerData.MovementSpeed;
+            currentHitBoxRadius = playerData.HitBoxRadius;
+        } else
+        {
+            Debug.LogError("Player Data is missing");
+        }
+     
     }
 
     private void OnEnable()
@@ -93,7 +108,7 @@ public class PlayerController : MonoBehaviour
             if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow)) movementVector += V2toV3(new Vector2(0, -1));
             if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)) movementVector += V2toV3(new Vector2(1, 0));
 
-            transform.position += movementVector.normalized * Time.deltaTime * movementSpeed;
+            transform.position += movementVector.normalized * Time.deltaTime * currentMovementSpeed;
 
             // Calculate nearest enemy direction
             if (spatialGroupManager != null)
@@ -126,7 +141,7 @@ public class PlayerController : MonoBehaviour
             if (enemy == null) continue;
 
             float distance = Vector2.Distance(transform.position, enemy.transform.position);
-            if (distance < hitBoxRadius)
+            if (distance < currentHitBoxRadius)
             {
                 // Take damage
                 ModifyHealth(-enemy.Damage);
@@ -181,9 +196,9 @@ public class PlayerController : MonoBehaviour
 
     public void ModifyHealth(int amount)
     {
-        health += amount;
+        currentHealth += amount;
 
-        if (health <= 0)
+        if (currentHealth <= 0)
         {
             KillPlayer();
         }

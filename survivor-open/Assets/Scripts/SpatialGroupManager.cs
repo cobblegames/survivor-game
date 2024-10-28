@@ -1,8 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 //! MIN HEAP FOR BATCH //
 public class BatchScore : System.IComparable<BatchScore>
@@ -66,6 +64,8 @@ public class SpatialGroupManager : MonoBehaviour
     private int mapHeightMax = -1;
 
     private PlayerController playerControllerReference;
+
+    private WaitForEndOfFrame waitForEndOfFrame = new WaitForEndOfFrame();
 
     private void OnEnable()
     {
@@ -131,7 +131,7 @@ public class SpatialGroupManager : MonoBehaviour
             SpawnEnemies();
             RunBatchLogic((int)(runLogicTimer * 1)); // runLogicTimer is the batchID, for that set of enemies
 
-            yield return new WaitForEndOfFrame();
+            yield return waitForEndOfFrame;
         }
 
         Debug.Log("Player is absent - probably dead or quit");

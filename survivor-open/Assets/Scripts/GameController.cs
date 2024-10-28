@@ -2,19 +2,15 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
-
 public class GameController : MonoBehaviour
 {
-     
-    public PlayerController PlayerScript { get { return playerScript; } }
+    public PlayerController PlayerScript
+    { get { return playerScript; } }
     [SerializeField] private PlayerController playerScript;
 
-
-    public SpatialGroupManager SpatialGroupManager { get { return spatialGroupManager; } }
+    public SpatialGroupManager SpatialGroupManager
+    { get { return spatialGroupManager; } }
     [SerializeField] private SpatialGroupManager spatialGroupManager;
-
-
-
 
     private void Start()
     {
@@ -35,22 +31,5 @@ public class GameController : MonoBehaviour
         spatialGroupManager.Initialize(playerScript);
 
         GameEvents.StartGame();
-
-
     }
-
-   
- 
-
-   
-
-
-   
-
-   
-
-  
-
-
 }
-

@@ -100,3 +100,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea6497728fa822e46afc1769337deb4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerData: {fileID: 11400000, guid: daa2f06c5f20eed478377b75c1578c0e, type: 2}
