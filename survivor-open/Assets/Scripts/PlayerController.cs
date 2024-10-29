@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
@@ -11,6 +12,9 @@ public class PlayerController : MonoBehaviour
     // Stats
 
    [SerializeField]  private PlayerData playerData;
+
+    [Header("Input Actions")]
+    [SerializeField] InputActionReference move;
 
     private int currentHealth = 100;
     private float currentMovementSpeed = 4f;
@@ -91,23 +95,15 @@ public class PlayerController : MonoBehaviour
         Destroy(gameObject);
     }
 
-    private Vector3 V2toV3(Vector2 v)
-    {
-        return new Vector3(v.x, v.y, 0);
-    }
 
     private IEnumerator PlayerMainLoop()
     {
         while (gameIsStarted)
         {
             Vector3 movementVector = Vector3.zero;
+            movementVector = move.action.ReadValue<Vector2>();
 
-            // WASD to move around
-            if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow)) movementVector += V2toV3(new Vector2(0, 1));
-            if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)) movementVector += V2toV3(new Vector2(-1, 0));
-            if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow)) movementVector += V2toV3(new Vector2(0, -1));
-            if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)) movementVector += V2toV3(new Vector2(1, 0));
-
+    
             transform.position += movementVector.normalized * Time.deltaTime * currentMovementSpeed;
 
             // Calculate nearest enemy direction
