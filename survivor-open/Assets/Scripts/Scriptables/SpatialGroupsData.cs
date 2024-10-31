@@ -3,12 +3,17 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "SpatialGroups/Setup Data", fileName = "SpatialGroupsSetupData")]
 public class SpatialGroupsData : ScriptableObject
 {
+    [SerializeField] private int batchCount = 50;
     [SerializeField] private int spatialGroupWidth = 100;
     [SerializeField] private int spatialGroupHeight = 100;
     [SerializeField] private int numberOfPartitions = 10000;
 
     [SerializeField] private int initEnemyCount = 10000;
     [SerializeField] private int maxEnemyCount = 10000;
+
+    public int BatchCount
+    { get { return batchCount; } private set { batchCount = value; } }
+
 
     public int SpatialGroupWidth
     { get { return spatialGroupWidth; } private set { spatialGroupWidth = value; } }

@@ -4,14 +4,16 @@ using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
+
+    [SerializeField] private PlayerController playerScript;
+    [SerializeField] private SpatialGroupManager spatialGroupManager;
+
     public PlayerController PlayerScript
     { get { return playerScript; } }
-    [SerializeField] private PlayerController playerScript;
 
     public SpatialGroupManager SpatialGroupManager
     { get { return spatialGroupManager; } }
-    [SerializeField] private SpatialGroupManager spatialGroupManager;
-
+   
     private void Start()
     {
         if (!playerScript)

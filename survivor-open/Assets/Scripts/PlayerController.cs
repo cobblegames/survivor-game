@@ -11,15 +11,14 @@ public class PlayerController : MonoBehaviour
 
     // Stats
 
-   [SerializeField]  private PlayerData playerData;
+    [SerializeField] private PlayerData playerData;
 
     [Header("Input Actions")]
-    [SerializeField] InputActionReference move;
+    [SerializeField] private InputActionReference move;
 
     private int currentHealth = 100;
     private float currentMovementSpeed = 4f;
     private float currentHitBoxRadius = 0.4f;
-
 
     // Spatial groups
     private int spatialGroup = -1;
@@ -31,7 +30,6 @@ public class PlayerController : MonoBehaviour
     private int takeDamageEveryXFrames = 0;
 
     private int takeDamageEveryXFramesCD = 10;
-   
 
     // Nearest enemy position (for weapons)
     private Vector2 nearestEnemyPosition = Vector2.zero;
@@ -58,16 +56,16 @@ public class PlayerController : MonoBehaviour
 
         spatialGroup = spatialGroupManager.GetSpatialGroup(transform.position.x, transform.position.y);
 
-        if (playerData != null) 
+        if (playerData != null)
         {
             currentHealth = playerData.Health;
             currentMovementSpeed = playerData.MovementSpeed;
             currentHitBoxRadius = playerData.HitBoxRadius;
-        } else
+        }
+        else
         {
             Debug.LogError("Player Data is missing");
         }
-     
     }
 
     private void OnEnable()
@@ -95,7 +93,6 @@ public class PlayerController : MonoBehaviour
         Destroy(gameObject);
     }
 
-
     private IEnumerator PlayerMainLoop()
     {
         while (gameIsStarted)
@@ -103,7 +100,6 @@ public class PlayerController : MonoBehaviour
             Vector3 movementVector = Vector3.zero;
             movementVector = move.action.ReadValue<Vector2>();
 
-    
             transform.position += movementVector.normalized * Time.deltaTime * currentMovementSpeed;
 
             // Calculate nearest enemy direction
@@ -119,9 +115,7 @@ public class PlayerController : MonoBehaviour
                     CheckCollisionWithEnemy();
                     takeDamageEveryXFrames = 0;
                 }
-
             }
-         
 
             yield return waitForEndOfFrame;
         }
@@ -155,7 +149,9 @@ public class PlayerController : MonoBehaviour
         bool foundATarget = false;
 
         List<int> spatialGroupsToSearch = new List<int>() { spatialGroup };
-        spatialGroupsToSearch = spatialGroupManager.GetExpandedSpatialGroups(spatialGroup, 6);
+
+        if (spatialGroupManager.enemySpatialGroups[spatialGroup].Count ==0)
+            spatialGroupsToSearch = spatialGroupManager.GetExpandedSpatialGroups(spatialGroup, 6); // expand search for enemies if no enemies in player spatial group
 
         // Get all enemies
         List<Enemy> nearbyEnemies = spatialGroupManager.GetAllEnemiesInSpatialGroups(spatialGroupsToSearch);

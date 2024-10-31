@@ -84,7 +84,7 @@ public class SpatialGroupManager : MonoBehaviour
 
     private void InitializeBatches()
     {
-        for (int i = 0; i < 50; i++)
+        for (int i = 0; i < spatialData.BatchCount; i++)
         {
             BatchScore batchScore = new BatchScore(i, 0);
 
@@ -100,11 +100,7 @@ public class SpatialGroupManager : MonoBehaviour
             enemySpatialGroups.Add(i, new HashSet<Enemy>());
         }
 
-        // Spawn 10,000 enemies
-        int initEnemyCount = 10000;
-        maxEnemyCount = 10000;
-
-        for (int i = 0; i < initEnemyCount; i++)
+        for (int i = 0; i < spatialData.InitEnemyCount; i++)
         {
             SpawnEnemy();
         }
@@ -264,9 +260,7 @@ public class SpatialGroupManager : MonoBehaviour
         }
 
         batchQueue.Remove(leastLoadedBatch); // Remove OLD
-
         leastLoadedBatch.UpdateScore(1);
-
         batchQueue.Add(leastLoadedBatch); // Add NEW
 
         return leastLoadedBatch.BatchId;
