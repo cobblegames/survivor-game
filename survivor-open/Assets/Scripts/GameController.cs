@@ -7,7 +7,7 @@ public class GameController : MonoBehaviour
 
     [SerializeField] private PlayerController playerScript;
     [SerializeField] private SpatialGroupManager spatialGroupManager;
-
+    [SerializeField] private CameraController cameraController;
     public PlayerController PlayerScript
     { get { return playerScript; } }
 
@@ -31,7 +31,9 @@ public class GameController : MonoBehaviour
         //Injecting dependencies to critical components
         playerScript.Initialize(spatialGroupManager);
         spatialGroupManager.Initialize(playerScript);
+        cameraController.Initialize(playerScript);
 
-      
+
+
     }
 }

@@ -5,8 +5,10 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
-    private bool gameIsStarted;
 
+    [SerializeField] private HealthBar healthBar;
+
+    private bool gameIsStarted;
     private SpatialGroupManager spatialGroupManager;
 
     // Stats
@@ -28,7 +30,6 @@ public class PlayerController : MonoBehaviour
 
     // Taking damage from enemy
     private int takeDamageEveryXFrames = 0;
-
     private int takeDamageEveryXFramesCD = 10;
 
     // Nearest enemy position (for weapons)
@@ -83,7 +84,7 @@ public class PlayerController : MonoBehaviour
     private void Handle_StartGame()
     {
         gameIsStarted = true;
-
+        healthBar.UpdateBar((float)currentHealth / (float)playerData.Health);
         StartCoroutine(PlayerMainLoop());
     }
 
@@ -150,8 +151,11 @@ public class PlayerController : MonoBehaviour
 
         List<int> spatialGroupsToSearch = new List<int>() { spatialGroup };
 
-        if (spatialGroupManager.enemySpatialGroups[spatialGroup].Count ==0)
-            spatialGroupsToSearch = spatialGroupManager.GetExpandedSpatialGroups(spatialGroup, 6); // expand search for enemies if no enemies in player spatial group
+        if (!spatialGroupManager.enemySpatialGroups.ContainsKey(spatialGroup) || spatialGroupManager.enemySpatialGroups[spatialGroup].Count == 0)
+        {
+            // If no enemies in player's spatial group, expand search
+            spatialGroupsToSearch = spatialGroupManager.GetExpandedSpatialGroups(spatialGroup, 6);
+        }
 
         // Get all enemies
         List<Enemy> nearbyEnemies = spatialGroupManager.GetAllEnemiesInSpatialGroups(spatialGroupsToSearch);
@@ -189,6 +193,7 @@ public class PlayerController : MonoBehaviour
     public void ModifyHealth(int amount)
     {
         currentHealth += amount;
+        healthBar.UpdateBar((float)currentHealth/(float)playerData.Health);
 
         if (currentHealth <= 0)
         {
