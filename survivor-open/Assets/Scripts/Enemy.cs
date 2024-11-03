@@ -56,7 +56,7 @@ public class Enemy : MonoBehaviour
 
 
 
-    public void RunEnemyLogic()
+    public void EveryFrameLogic()
     {
         // Calculate direction
         if (playerController != null)

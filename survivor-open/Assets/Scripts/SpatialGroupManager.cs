@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 //! MIN HEAP FOR BATCH //
@@ -40,6 +41,9 @@ public class SpatialGroupManager : MonoBehaviour
 
     // For enemies
     public Dictionary<int, HashSet<Enemy>> enemySpatialGroups = new Dictionary<int, HashSet<Enemy>>();
+    // For bullets
+    public Dictionary<int, HashSet<Bullet>> bulletSpatialGroups = new Dictionary<int, HashSet<Bullet>>();
+
 
     private SortedSet<BatchScore> batchQueue_Enemy = new SortedSet<BatchScore>();
 
@@ -62,6 +66,15 @@ public class SpatialGroupManager : MonoBehaviour
     private int mapWidthMax = -1;
     private int mapHeightMin = -1;
     private int mapHeightMax = -1;
+
+
+    // For get spatial group STATIC (more efficient) calculations
+    int CELLS_PER_ROW_STATIC;
+    int CELLS_PER_COLUMN_STATIC; // Square grid assumption
+    float CELL_WIDTH_STATIC;
+    float CELL_HEIGHT_STATIC;
+    int HALF_WIDTH_STATIC;
+    int HALF_HEIGHT_STATIC;
 
     private PlayerController playerControllerReference;
 
@@ -111,6 +124,15 @@ public class SpatialGroupManager : MonoBehaviour
         mapHeightMin = -spatialData.SpatialGroupHeight / 2;
         mapHeightMax = spatialData.SpatialGroupHeight / 2;
 
+        //Init Static Data Once
+
+        CELLS_PER_ROW_STATIC = (int)Mathf.Sqrt(spatialData.NumberOfPartitions);
+        CELLS_PER_COLUMN_STATIC = CELLS_PER_ROW_STATIC; // Square grid assumption
+        CELL_WIDTH_STATIC = spatialData.SpatialGroupWidth / CELLS_PER_ROW_STATIC;
+        CELL_HEIGHT_STATIC = spatialData.SpatialGroupHeight / CELLS_PER_COLUMN_STATIC;
+        HALF_WIDTH_STATIC = spatialData.SpatialGroupWidth / 2;
+        HALF_HEIGHT_STATIC = spatialData.SpatialGroupHeight / 2;
+
         StartCoroutine(SpatialManagerMainCoroutiune());
     }
 
@@ -122,11 +144,13 @@ public class SpatialGroupManager : MonoBehaviour
 
             if (runLogicTimer >= runLogicTimerCD)
             {
+                RunOnceASecondLogicForAllBullets();
                 runLogicTimer = 0f;
             }
 
             SpawnEnemies();
-            RunBatchLogic((int)(runLogicTimer * 1)); // runLogicTimer is the batchID, for that set of enemies
+
+            RunEnemyLogic((int)(runLogicTimer)); // runLogicTimer is the batchID, for that set of enemies
 
             yield return waitForEndOfFrame;
         }
@@ -134,15 +158,32 @@ public class SpatialGroupManager : MonoBehaviour
         Debug.Log("Player is absent - probably dead or quit");
     }
 
-    private void RunBatchLogic(int batchID)
+
+    private void RunBulletLogic(int batchID)
+    {
+        // Run logic for all enemies in batch
+        foreach (Bullet bullet in bulletSpatialGroups.SelectMany(x => x.Value).ToList())
+        {
+            if (bullet) bullet.EveryFrameLogic();
+        }
+    }
+
+    private void RunEnemyLogic(int batchID)
     {
         // Run logic for all enemies in batch
         foreach (Enemy enemy in enemyBatches[batchID])
         {
-            if (enemy) enemy.RunEnemyLogic();
-        }
+            if (enemy) enemy.EveryFrameLogic();
+        }    
+    }
 
-        // TODO: Clean out previous batch?
+    private void RunOnceASecondLogicForAllBullets()
+    {
+        
+        foreach (Bullet bullet in bulletSpatialGroups.SelectMany(x => x.Value).ToList())
+        {
+            bullet.OnceASecondLogic();
+        }
     }
 
     public List<Enemy> GetAllEnemiesInSpatialGroups(List<int> spatialGroups)
@@ -161,75 +202,55 @@ public class SpatialGroupManager : MonoBehaviour
 
         return enemies;
     }
-
-    public List<int> GetExpandedSpatialGroups(int spatialGroup, int numberOfPartitions = -1)
+    public List<int> GetExpandedSpatialGroups(int spatialGroup, Vector2? direction = null, int numberOfPartitions = -1)
     {
-        List<int> expandedSpatialGroups = new List<int>() { spatialGroup };
+        List<int> expandedSpatialGroups = new List<int> { spatialGroup };
 
-        int widthRange = spatialData.SpatialGroupWidth;  // ex. 100
-        int heightRange = spatialData.SpatialGroupHeight; // ex. 100
-        if (numberOfPartitions == -1)
-            numberOfPartitions = spatialData.NumberOfPartitions; // ex. 10000 -or- 25
+        int partitionsPerRow = (int)Mathf.Sqrt(numberOfPartitions == -1 ? spatialData.NumberOfPartitions : numberOfPartitions);
+        int totalRows = partitionsPerRow;
 
-        int sqrtOfPartitions = (int)Mathf.Sqrt(numberOfPartitions); // Square root of partitions
-        int partitionsPerRow = sqrtOfPartitions;  // Number of columns in the grid
-        int numberOfRows = sqrtOfPartitions;      // Number of rows in the grid
+        bool goingRight = direction.HasValue && direction.Value.x > 0;
+        bool goingTop = direction.HasValue && direction.Value.y > 0;
 
-        // Add side and diagonal neighbors if they are within bounds
-        AddSideNeighbors(expandedSpatialGroups, spatialGroup, partitionsPerRow, numberOfRows);
-        AddDiagonalNeighbors(expandedSpatialGroups, spatialGroup, partitionsPerRow, numberOfRows);
+        // Boundary checks
+        bool isLeft = IsLeftEdge(spatialGroup, partitionsPerRow);
+        bool isRight = IsRightEdge(spatialGroup, partitionsPerRow);
+        bool isTop = IsTopEdge(spatialGroup, totalRows);
+        bool isBottom = IsBottomEdge(spatialGroup, partitionsPerRow);
+
+        // Add neighbors based on direction if provided
+        AddNeighbors(expandedSpatialGroups, spatialGroup, partitionsPerRow, isLeft, isRight, isTop, isBottom, goingRight, goingTop);
 
         return expandedSpatialGroups;
     }
 
-    // Helper method to check boundaries and add side neighbors (top, bottom, left, right)
-    private void AddSideNeighbors(List<int> groups, int spatialGroup, int partitionsPerRow, int numberOfRows)
+    private void AddNeighbors(
+        List<int> groups, int spatialGroup, int partitionsPerRow,
+        bool isLeft, bool isRight, bool isTop, bool isBottom,
+        bool goingRight, bool goingTop)
     {
-        bool isLeft = IsLeftEdge(spatialGroup, partitionsPerRow);
-        bool isRight = IsRightEdge(spatialGroup, partitionsPerRow);
-        bool isTop = IsTopEdge(spatialGroup, partitionsPerRow, numberOfRows);
-        bool isBottom = IsBottomEdge(spatialGroup, partitionsPerRow);
+        // Sides
+        if (!isTop && goingTop) groups.Add(spatialGroup + partitionsPerRow);
+        if (!isBottom && !goingTop) groups.Add(spatialGroup - partitionsPerRow);
+        if (!isLeft && !goingRight) groups.Add(spatialGroup - 1);
+        if (!isRight && goingRight) groups.Add(spatialGroup + 1);
 
-        if (!isTop) groups.Add(spatialGroup + partitionsPerRow);     // Top neighbor
-        if (!isBottom) groups.Add(spatialGroup - partitionsPerRow);  // Bottom neighbor
-        if (!isLeft) groups.Add(spatialGroup - 1);                   // Left neighbor
-        if (!isRight) groups.Add(spatialGroup + 1);                  // Right neighbor
+        // Diagonals
+        if (!isTop && !isRight && (goingTop || goingRight)) groups.Add(spatialGroup + partitionsPerRow + 1); // top right
+        if (!isTop && !isLeft && (goingTop || !goingRight)) groups.Add(spatialGroup + partitionsPerRow - 1); // top left
+        if (!isBottom && !isRight && (!goingTop || goingRight)) groups.Add(spatialGroup - partitionsPerRow + 1); // bottom right
+        if (!isBottom && !isLeft && (!goingTop || !goingRight)) groups.Add(spatialGroup - partitionsPerRow - 1); // bottom left
     }
 
-    // Helper method to check boundaries and add diagonal neighbors
-    private void AddDiagonalNeighbors(List<int> groups, int spatialGroup, int partitionsPerRow, int numberOfRows)
-    {
-        bool isLeft = IsLeftEdge(spatialGroup, partitionsPerRow);
-        bool isRight = IsRightEdge(spatialGroup, partitionsPerRow);
-        bool isTop = IsTopEdge(spatialGroup, partitionsPerRow, numberOfRows);
-        bool isBottom = IsBottomEdge(spatialGroup, partitionsPerRow);
+    // Edge-check methods
+    private bool IsLeftEdge(int spatialGroup, int partitionsPerRow) => spatialGroup % partitionsPerRow == 0;
 
-        if (!isTop && !isRight) groups.Add(spatialGroup + partitionsPerRow + 1);     // Top-right neighbor
-        if (!isTop && !isLeft) groups.Add(spatialGroup + partitionsPerRow - 1);      // Top-left neighbor
-        if (!isBottom && !isRight) groups.Add(spatialGroup - partitionsPerRow + 1);  // Bottom-right neighbor
-        if (!isBottom && !isLeft) groups.Add(spatialGroup - partitionsPerRow - 1);   // Bottom-left neighbor
-    }
+    private bool IsRightEdge(int spatialGroup, int partitionsPerRow) => spatialGroup % partitionsPerRow == partitionsPerRow - 1;
 
-    // Edge-checking methods to encapsulate boundary logic
-    private bool IsLeftEdge(int spatialGroup, int partitionsPerRow)
-    {
-        return spatialGroup % partitionsPerRow == 0;
-    }
+    private bool IsTopEdge(int spatialGroup, int totalRows) => spatialGroup / totalRows >= totalRows - 1;
 
-    private bool IsRightEdge(int spatialGroup, int partitionsPerRow)
-    {
-        return spatialGroup % partitionsPerRow == partitionsPerRow - 1;
-    }
+    private bool IsBottomEdge(int spatialGroup, int partitionsPerRow) => spatialGroup / partitionsPerRow == 0;
 
-    private bool IsTopEdge(int spatialGroup, int partitionsPerRow, int numberOfRows)
-    {
-        return spatialGroup / partitionsPerRow >= numberOfRows - 1;
-    }
-
-    private bool IsBottomEdge(int spatialGroup, int partitionsPerRow)
-    {
-        return spatialGroup / partitionsPerRow == 0;
-    }
 
     private void SpawnEnemies()
     {
@@ -279,7 +300,7 @@ public class SpatialGroupManager : MonoBehaviour
 
         // Get the QUADRANT of the player (25 quadrants in the map)
         int playerQuadrant = GetSpatialGroupDynamic(playerControllerReference.transform.position.x, playerControllerReference.transform.position.y, spatialData.SpatialGroupWidth, spatialData.SpatialGroupHeight, 25);
-        List<int> expandedSpatialGroups = GetExpandedSpatialGroups(playerQuadrant, 25);
+        List<int> expandedSpatialGroups = GetExpandedSpatialGroups(playerQuadrant,null, 25);
 
         // Remove the quadrant player is in
         expandedSpatialGroups.Remove(playerQuadrant);
@@ -347,6 +368,28 @@ public class SpatialGroupManager : MonoBehaviour
     public int GetSpatialGroup(float xPos, float yPos)
     {
         return GetSpatialGroupDynamic(xPos, yPos, spatialData.SpatialGroupWidth, spatialData.SpatialGroupHeight, spatialData.NumberOfPartitions);
+    }
+
+    public bool IsOutOfBounds(Vector2 _position)
+    {
+        if( _position.x < mapWidthMin || _position.x > mapWidthMax|| _position.y < mapHeightMin|| _position.y > mapHeightMax ||
+           Vector2.Distance(_position, playerControllerReference.transform.position) > 20f)
+            return true;
+        else return false;
+    }
+
+    public int GetSpatialGroupStatic(float xPos, float yPos)
+    {
+        // Adjust positions to map's coordinate system
+        float adjustedX = xPos + spatialData.SpatialGroupWidth/2;
+        float adjustedY = yPos + spatialData.SpatialGroupHeight / 2; ;
+
+        // Calculate the indices
+        int xIndex = (int)(adjustedX / CELL_WIDTH_STATIC);
+        int yIndex = (int)(adjustedY / CELL_HEIGHT_STATIC);
+
+        // Calculate the final index
+        return xIndex + yIndex * CELLS_PER_ROW_STATIC;
     }
 
     private int GetSpatialGroupDynamic(float xPos, float yPos, float mapWidth, float mapHeight, int totalPartitions)

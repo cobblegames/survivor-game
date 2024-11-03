@@ -154,7 +154,7 @@ public class PlayerController : MonoBehaviour
         if (!spatialGroupManager.enemySpatialGroups.ContainsKey(spatialGroup) || spatialGroupManager.enemySpatialGroups[spatialGroup].Count == 0)
         {
             // If no enemies in player's spatial group, expand search
-            spatialGroupsToSearch = spatialGroupManager.GetExpandedSpatialGroups(spatialGroup, 6);
+            spatialGroupsToSearch = spatialGroupManager.GetExpandedSpatialGroups(spatialGroup,null, 6);
         }
 
         // Get all enemies
