@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class Enemy : MonoBehaviour
+public class Enemy : MonoBehaviour, IMovable
 {
     private int batchId;
 
@@ -64,7 +64,7 @@ public class Enemy : MonoBehaviour
             currentMovementDirection = playerController.transform.position - transform.position;
             currentMovementDirection.Normalize();
             transform.position += currentMovementDirection * Time.deltaTime * currentSpeed;
-            PushNearbyEnemies();
+          
             int newSpatialGroup = spatialGroupManager.GetSpatialGroup(transform.position.x, transform.position.y); // GET spatial group
             if (newSpatialGroup != spatialGroup)
             {
@@ -75,6 +75,12 @@ public class Enemy : MonoBehaviour
             }
         }
     }
+
+    public void OnceEveryCertainInterval()
+    {
+        PushNearbyEnemies();
+    }
+
 
     private void PushNearbyEnemies()
     {

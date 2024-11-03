@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 //! MIN HEAP FOR BATCH //
 public class BatchScore : System.IComparable<BatchScore>
@@ -150,7 +151,7 @@ public class SpatialGroupManager : MonoBehaviour
 
             SpawnEnemies();
 
-            RunEnemyLogic((int)(runLogicTimer)); // runLogicTimer is the batchID, for that set of enemies
+            RunEnemyEveryFrameLogic((int)(runLogicTimer)); // runLogicTimer is the batchID, for that set of enemies
 
             yield return waitForEndOfFrame;
         }
@@ -159,18 +160,15 @@ public class SpatialGroupManager : MonoBehaviour
     }
 
 
-    private void RunBulletLogic(int batchID)
+
+    private void RunEnemyEveryFrameLogic(int batchID)
     {
-        // Run logic for all enemies in batch
         foreach (Bullet bullet in bulletSpatialGroups.SelectMany(x => x.Value).ToList())
         {
             if (bullet) bullet.EveryFrameLogic();
         }
-    }
 
-    private void RunEnemyLogic(int batchID)
-    {
-        // Run logic for all enemies in batch
+     
         foreach (Enemy enemy in enemyBatches[batchID])
         {
             if (enemy) enemy.EveryFrameLogic();
@@ -179,10 +177,14 @@ public class SpatialGroupManager : MonoBehaviour
 
     private void RunOnceASecondLogicForAllBullets()
     {
-        
+        foreach (Enemy enemy in enemySpatialGroups.SelectMany(x => x.Value).ToList())
+        {
+            if (enemy) enemy.OnceEveryCertainInterval();
+        }
+
         foreach (Bullet bullet in bulletSpatialGroups.SelectMany(x => x.Value).ToList())
         {
-            bullet.OnceASecondLogic();
+            bullet.OnceEveryCertainInterval();
         }
     }
 

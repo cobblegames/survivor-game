@@ -14,7 +14,6 @@ public class SpatialGroupsData : ScriptableObject
     public int BatchCount
     { get { return batchCount; } private set { batchCount = value; } }
 
-
     public int SpatialGroupWidth
     { get { return spatialGroupWidth; } private set { spatialGroupWidth = value; } }
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviour, IMovable
 {
 
     [SerializeField] private HealthBar healthBar;
@@ -98,28 +98,44 @@ public class PlayerController : MonoBehaviour
     {
         while (gameIsStarted)
         {
-            Vector3 movementVector = Vector3.zero;
-            movementVector = move.action.ReadValue<Vector2>();
+            EveryFrameLogic();
 
-            transform.position += movementVector.normalized * Time.deltaTime * currentMovementSpeed;
-
+          
             // Calculate nearest enemy direction
             if (spatialGroupManager != null)
             {
                 spatialGroup = spatialGroupManager.GetSpatialGroup(transform.position.x, transform.position.y); // GET spatial group
-                CalculateNearestEnemyDirection();
-
+               
                 // Colliding with any enemy? Lose health?
                 takeDamageEveryXFrames++;
                 if (takeDamageEveryXFrames > takeDamageEveryXFramesCD)
                 {
-                    CheckCollisionWithEnemy();
+                    OnceEveryCertainInterval();
                     takeDamageEveryXFrames = 0;
+
                 }
             }
 
             yield return waitForEndOfFrame;
         }
+    }
+
+    public void EveryFrameLogic()
+    {
+        Vector3 movementVector = Vector3.zero;
+        movementVector = move.action.ReadValue<Vector2>();
+
+        transform.position += movementVector.normalized * Time.deltaTime * currentMovementSpeed;
+
+    }
+
+
+
+    public void OnceEveryCertainInterval()
+    {
+        CalculateNearestEnemyDirection();
+
+        CheckCollisionWithEnemy();
     }
 
     private void CheckCollisionWithEnemy()

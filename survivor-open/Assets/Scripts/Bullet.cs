@@ -1,15 +1,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Bullet : MonoBehaviour
+public class Bullet : MonoBehaviour, IMovable
 {
     private SpatialGroupManager spatialGroupManager;
 
     public bool spinBullet;
-    public int bulletDamage;
-    public float movementSpeed;
-    public float bulletHitBoxRadius;
-    public Transform modelTransform;
+    private int currentBulletDamage;
+    private float currentBulletSpeed;
+    private float currentBulletRadius;
+    private Transform modelTransform;
 
     private int spatialGroup;
     private Vector2 movementDirection = Vector2.zero;
@@ -43,7 +43,7 @@ public class Bullet : MonoBehaviour
     public void EveryFrameLogic()
     {
         // Move the bullet
-        transform.position += (Vector3)(movementDirection * movementSpeed * Time.deltaTime);
+        transform.position += (Vector3)(movementDirection * currentBulletSpeed * Time.deltaTime);
 
         // Rotate bullet if necessary
         if (spinBullet)
@@ -84,17 +84,17 @@ public class Bullet : MonoBehaviour
         {
             if (enemy == null) continue;
 
-            if (Vector2.Distance(transform.position, enemy.transform.position) < bulletHitBoxRadius)
+            if (Vector2.Distance(transform.position, enemy.transform.position) < currentBulletRadius)
             {
                 OnContactWithEnemy?.Invoke(transform);
-                enemy.ChangeHealth(-bulletDamage);
+                enemy.ChangeHealth(-currentBulletDamage);
                 DestroyBullet();
                 break;
             }
         }
     }
 
-    public void OnceASecondLogic()
+    public void OnceEveryCertainInterval()
     {
         if (!isDestroyed && spatialGroupManager.IsOutOfBounds((Vector2)transform.position))
         {
