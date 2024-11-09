@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerController : MonoBehaviour, IMovable
+public class PlayerController : MonoBehaviour, IMovable, IControllable
 {
 
     [SerializeField] private HealthBar healthBar;
@@ -51,9 +51,9 @@ public class PlayerController : MonoBehaviour, IMovable
         set { noNearbyEnemies = value; }
     }
 
-    public void Initialize(SpatialGroupManager manager)
+    public void Initialize(IControllable[] injectedArgumentsTable)
     {
-        this.spatialGroupManager = manager;
+        this.spatialGroupManager = injectedArgumentsTable[0] as SpatialGroupManager;
 
         spatialGroup = spatialGroupManager.GetSpatialGroup(transform.position.x, transform.position.y);
 

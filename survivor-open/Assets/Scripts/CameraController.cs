@@ -1,12 +1,12 @@
 using UnityEngine;
 
-public class CameraController : MonoBehaviour
+public class CameraController : MonoBehaviour, IControllable
 {
     PlayerController player;
  
-    public void Initialize(PlayerController _player)
+    public void Initialize(IControllable[] _argTable)
     {
-        this.player = _player;
+        this.player = _argTable[0] as PlayerController;
     }
 
 

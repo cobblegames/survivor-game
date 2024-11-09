@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 //! MIN HEAP FOR BATCH //
 public class BatchScore : System.IComparable<BatchScore>
@@ -33,7 +32,7 @@ public class BatchScore : System.IComparable<BatchScore>
     }
 }
 
-public class SpatialGroupManager : MonoBehaviour
+public class SpatialGroupManager : MonoBehaviour, IControllable
 {
     public SpatialGroupsData spatialData;
 
@@ -91,9 +90,9 @@ public class SpatialGroupManager : MonoBehaviour
         GameEvents.OnStartGame -= InitializeBatches;
     }
 
-    public void Initialize(PlayerController _player)
+    public void Initialize(IControllable[] _injectedArgumentsTable)
     {
-        this.playerControllerReference = _player;
+        this.playerControllerReference = _injectedArgumentsTable[0] as PlayerController;
     }
 
     private void InitializeBatches()
@@ -333,7 +332,7 @@ public class SpatialGroupManager : MonoBehaviour
         enemyScript.BatchID = batchToBeAdded;
         enemyBatches[batchToBeAdded].Add(enemyScript);
 
-        enemyScript.Initialize(this, playerControllerReference); //Inject dependency
+        enemyScript.Initialize(new IControllable[] {this, playerControllerReference }); //Inject dependency
     }
 
     private Vector2 GetPartitionCenterDynamic(int partition, float mapWidth, float mapHeight, int totalPartitions)

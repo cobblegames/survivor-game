@@ -29,9 +29,12 @@ public class GameController : MonoBehaviour
         }
 
         //Injecting dependencies to critical components
-        playerScript.Initialize(spatialGroupManager);
-        spatialGroupManager.Initialize(playerScript);
-        cameraController.Initialize(playerScript);
+
+        IControllable[] _argTable = new IControllable[] {spatialGroupManager};
+         
+        playerScript.Initialize(new IControllable[] { spatialGroupManager });
+        spatialGroupManager.Initialize(new IControllable[] { playerScript });
+        cameraController.Initialize(new IControllable[] { playerScript });
 
 
 

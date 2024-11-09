@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class Enemy : MonoBehaviour, IMovable
+public class Enemy : MonoBehaviour, IMovable, IControllable
 {
     private int batchId;
 
@@ -37,10 +37,10 @@ public class Enemy : MonoBehaviour, IMovable
     private PlayerController playerController;
 
     // SpatialGroupManager Injection
-    public void Initialize(SpatialGroupManager manager, PlayerController _playerController)
+    public void Initialize(IControllable[] _argTable)
     {
-        this.spatialGroupManager = manager;
-        this.playerController = _playerController;
+        this.spatialGroupManager = _argTable[0] as SpatialGroupManager;
+        this.playerController = _argTable[1] as PlayerController;
 
         if (enemyData != null) 
         {
