@@ -1,25 +1,28 @@
+using System.Collections;
 using UnityEngine;
 
-public class CameraController : MonoBehaviour, IControllable
+public class CameraController : MonoBehaviour
 {
-    PlayerController player;
- 
-    public void Initialize(IControllable[] _argTable)
+    private PlayerController player;
+    private WaitForEndOfFrame endOfFrame;
+
+    public void Initialize(PlayerController _player)
     {
-        this.player = _argTable[0] as PlayerController;
+        endOfFrame = new WaitForEndOfFrame();
+        this.player = _player;
+
+        StartCoroutine(MoveCamera());
     }
 
-
-    private void LateUpdate()
+    private IEnumerator MoveCamera()
     {
-        if (player != null)
+        while (player != null)
         {
-            
             Vector3 targetPosition = player.transform.position;
-            transform.position = targetPosition;
+
+            transform.position = new Vector3(targetPosition.x, targetPosition.y, -10);
+
+            yield return endOfFrame;
         }
     }
-
-
-
 }

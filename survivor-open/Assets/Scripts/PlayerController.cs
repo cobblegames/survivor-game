@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerController : MonoBehaviour, IMovable, IControllable
+public class PlayerController : MonoBehaviour, IControllable
 {
 
     [SerializeField] private HealthBar healthBar;
@@ -51,9 +51,9 @@ public class PlayerController : MonoBehaviour, IMovable, IControllable
         set { noNearbyEnemies = value; }
     }
 
-    public void Initialize(IControllable[] injectedArgumentsTable)
+    public void Initialize(IControllable[] _injectedElements)
     {
-        this.spatialGroupManager = injectedArgumentsTable[0] as SpatialGroupManager;
+        this.spatialGroupManager = _injectedElements[0] as SpatialGroupManager;
 
         spatialGroup = spatialGroupManager.GetSpatialGroup(transform.position.x, transform.position.y);
 
@@ -68,6 +68,7 @@ public class PlayerController : MonoBehaviour, IMovable, IControllable
             Debug.LogError("Player Data is missing");
         }
     }
+
 
     private void OnEnable()
     {
@@ -98,44 +99,28 @@ public class PlayerController : MonoBehaviour, IMovable, IControllable
     {
         while (gameIsStarted)
         {
-            EveryFrameLogic();
+            Vector3 movementVector = Vector3.zero;
+            movementVector = move.action.ReadValue<Vector2>();
 
-          
+            transform.position += movementVector.normalized * Time.deltaTime * currentMovementSpeed;
+
             // Calculate nearest enemy direction
             if (spatialGroupManager != null)
             {
                 spatialGroup = spatialGroupManager.GetSpatialGroup(transform.position.x, transform.position.y); // GET spatial group
-               
+                CalculateNearestEnemyDirection();
+
                 // Colliding with any enemy? Lose health?
                 takeDamageEveryXFrames++;
                 if (takeDamageEveryXFrames > takeDamageEveryXFramesCD)
                 {
-                    OnceEveryCertainInterval();
+                    CheckCollisionWithEnemy();
                     takeDamageEveryXFrames = 0;
-
                 }
             }
 
             yield return waitForEndOfFrame;
         }
-    }
-
-    public void EveryFrameLogic()
-    {
-        Vector3 movementVector = Vector3.zero;
-        movementVector = move.action.ReadValue<Vector2>();
-
-        transform.position += movementVector.normalized * Time.deltaTime * currentMovementSpeed;
-
-    }
-
-
-
-    public void OnceEveryCertainInterval()
-    {
-        CalculateNearestEnemyDirection();
-
-        CheckCollisionWithEnemy();
     }
 
     private void CheckCollisionWithEnemy()
@@ -170,7 +155,7 @@ public class PlayerController : MonoBehaviour, IMovable, IControllable
         if (!spatialGroupManager.enemySpatialGroups.ContainsKey(spatialGroup) || spatialGroupManager.enemySpatialGroups[spatialGroup].Count == 0)
         {
             // If no enemies in player's spatial group, expand search
-            spatialGroupsToSearch = spatialGroupManager.GetExpandedSpatialGroups(spatialGroup,null, 6);
+            spatialGroupsToSearch = spatialGroupManager.GetExpandedSpatialGroups(spatialGroup, 6);
         }
 
         // Get all enemies
@@ -221,4 +206,5 @@ public class PlayerController : MonoBehaviour, IMovable, IControllable
     {
         GameEvents.StopGame();
     }
+
 }

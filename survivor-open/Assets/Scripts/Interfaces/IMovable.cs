@@ -1,6 +1,6 @@
-public interface IMovable 
+public interface IMovable
 {
     public void EveryFrameLogic();
 
-    public void OnceEveryCertainInterval();
+    public void IntervalLogic();
 }
