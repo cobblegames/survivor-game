@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
 //! MIN HEAP FOR BATCH //
 public class BatchScore : System.IComparable<BatchScore>
 {
@@ -64,8 +63,15 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
     private int mapHeightMin = -1;
     private int mapHeightMax = -1;
 
-    private PlayerController playerControllerReference;
+    // For get spatial group STATIC (more efficient) calculations
+    int CELLS_PER_ROW_STATIC;
+    int CELLS_PER_COLUMN_STATIC; // Square grid assumption
+    float CELL_WIDTH_STATIC;
+    float CELL_HEIGHT_STATIC;
+    int HALF_WIDTH_STATIC;
+    int HALF_HEIGHT_STATIC;
 
+    private PlayerController playerControllerReference;
     private WaitForEndOfFrame waitForEndOfFrame = new WaitForEndOfFrame();
 
     private void OnEnable()
@@ -82,7 +88,6 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
     {
         this.playerControllerReference = _injectedElements[0] as PlayerController;
     }
-
 
     private void InitializeBatches()
     {
@@ -112,6 +117,14 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
         mapWidthMax = spatialData.SpatialGroupWidth / 2;
         mapHeightMin = -spatialData.SpatialGroupHeight / 2;
         mapHeightMax = spatialData.SpatialGroupHeight / 2;
+
+        // STATIC GET SPATIAL GROUP ONCE CALCULATIONS
+        CELLS_PER_ROW_STATIC = (int)Mathf.Sqrt(spatialData.NumberOfPartitions);
+        CELLS_PER_COLUMN_STATIC = CELLS_PER_ROW_STATIC; // Square grid assumption
+        CELL_WIDTH_STATIC = spatialData.SpatialGroupWidth / CELLS_PER_ROW_STATIC;
+        CELL_HEIGHT_STATIC = spatialData.SpatialGroupHeight / CELLS_PER_COLUMN_STATIC;
+        HALF_WIDTH_STATIC = spatialData.SpatialGroupWidth / 2;
+        HALF_HEIGHT_STATIC = spatialData.SpatialGroupHeight / 2;
 
         StartCoroutine(SpatialManagerMainCoroutiune());
     }
@@ -162,6 +175,37 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
         }
 
         return enemies;
+    }
+    public List<int> GetExpandedSpatialGroups(int spatialGroup, Vector2 direction)
+    {
+        List<int> expandedSpatialGroups = new List<int>() { spatialGroup };
+
+        bool goingRight = direction.x > 0;
+        bool goingTop = direction.y > 0;
+
+        int widthRange = spatialData.SpatialGroupWidth;  // ex. 100
+        int heightRange = spatialData.SpatialGroupHeight; // ex. 100
+
+
+        bool isLeft = spatialGroup % widthRange == 0;
+        bool isRight = spatialGroup % widthRange == widthRange - 1;
+        bool isTop = spatialGroup / widthRange == heightRange - 1;
+        bool isBottom = spatialGroup / widthRange == 0;
+
+
+        // Sides
+        if (!isTop && goingTop) expandedSpatialGroups.Add(spatialGroup + widthRange);
+        if (!isBottom && !goingTop) expandedSpatialGroups.Add(spatialGroup - widthRange);
+        if (!isLeft && !goingRight) expandedSpatialGroups.Add(spatialGroup - 1);
+        if (!isRight && goingRight) expandedSpatialGroups.Add(spatialGroup + 1);
+
+        // Diagonals
+        if (!isTop && !isRight && (goingTop || goingRight)) expandedSpatialGroups.Add(spatialGroup + widthRange + 1); // top right
+        if (!isTop && !isLeft && (goingTop || !goingRight)) expandedSpatialGroups.Add(spatialGroup + widthRange - 1); // top left
+        if (!isBottom && !isRight && (!goingTop || goingRight)) expandedSpatialGroups.Add(spatialGroup - widthRange + 1); // bottom right
+        if (!isBottom && !isLeft && (!goingTop || !goingRight)) expandedSpatialGroups.Add(spatialGroup - widthRange - 1); // bottom left
+
+        return expandedSpatialGroups;
     }
 
     public List<int> GetExpandedSpatialGroups(int spatialGroup, int numberOfPartitions = -1)
@@ -312,10 +356,7 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
         enemyScript.BatchID = batchToBeAdded;
         enemyBatches[batchToBeAdded].Add(enemyScript);
 
-   
-
         enemyScript.Initialize(new IControllable[] { this, playerControllerReference });
-
     }
 
     private Vector2 GetPartitionCenterDynamic(int partition, float mapWidth, float mapHeight, int totalPartitions)
@@ -380,5 +421,21 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
         return xIndex + yIndex * cellsPerRow;
     }
 
-  
+   
+    public int GetSpatialGroupStatic(float xPos, float yPos)
+    {
+        // Adjust positions to map's coordinate system
+        float adjustedX = xPos + HALF_WIDTH_STATIC;
+        float adjustedY = yPos + HALF_HEIGHT_STATIC;
+
+        // Calculate the indices
+        int xIndex = (int)(adjustedX / CELL_WIDTH_STATIC);
+        int yIndex = (int)(adjustedY / CELL_HEIGHT_STATIC);
+
+        // Calculate the final index
+        return xIndex + yIndex * CELLS_PER_ROW_STATIC;
+    }
+
+
+
 }

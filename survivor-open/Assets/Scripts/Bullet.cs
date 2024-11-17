@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Bullet : MonoBehaviour, IMovable
+public class Bullet : MonoBehaviour, IMovable, IControllable
 {
     private SpatialGroupManager spatialGroupManager;
 
@@ -17,9 +17,6 @@ public class Bullet : MonoBehaviour, IMovable
 
     private bool isDestroyed = false;
 
-    // Delegates and events for bullet behavior
-    public delegate void BulletSpawnAction();
-    public event BulletSpawnAction OnBulletSpawned;
 
     public delegate void BulletEnemyContactAction(Transform parentBullet);
     public event BulletEnemyContactAction OnContactWithEnemy;
@@ -30,15 +27,15 @@ public class Bullet : MonoBehaviour, IMovable
         set => movementDirection = value;
     }
 
-    public void Initialize(SpatialGroupManager _spatialGroupManager)
-    {
-        //spatialGroupManager = _spatialGroupManager;
-        //spatialGroup = spatialGroupManager.GetSpatialGroupStatic(transform.position.x, transform.position.y);
-        //surroundingSpatialGroups = spatialGroupManager.GetExpandedSpatialGroups(spatialGroup, movementDirection);
+    public void Initialize(IControllable[] _injectedElements)
+    {  spatialGroupManager = _injectedElements[0] as SpatialGroupManager;
+       spatialGroup = spatialGroupManager.GetSpatialGroupStatic(transform.position.x, transform.position.y);
+       surroundingSpatialGroups = spatialGroupManager.GetExpandedSpatialGroups(spatialGroup, movementDirection);
 
         //// Trigger the spawn event
         //OnBulletSpawned?.Invoke();
     }
+
 
     public void EveryFrameLogic()
     {

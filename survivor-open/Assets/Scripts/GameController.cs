@@ -33,7 +33,7 @@ public class GameController : MonoBehaviour
         playerScript.Initialize(new IControllable[] { spatialGroupManager });
         spatialGroupManager.Initialize(new IControllable[] { playerScript });
   
-        cameraController.Initialize(playerScript);
+        cameraController.Initialize(new IControllable[] { playerScript });
 
 
 

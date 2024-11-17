@@ -36,7 +36,7 @@ public class Enemy : MonoBehaviour, IMovable, IControllable
     private SpatialGroupManager spatialGroupManager;
     private PlayerController playerController;
 
-    // SpatialGroupManager Injection
+
     public void Initialize(IControllable[] _argTable)
     {
         this.spatialGroupManager = _argTable[0] as SpatialGroupManager;

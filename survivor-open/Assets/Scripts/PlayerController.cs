@@ -125,7 +125,7 @@ public class PlayerController : MonoBehaviour, IControllable
 
     private void CheckCollisionWithEnemy()
     {
-        List<int> surroundingSpatialGroups = spatialGroupManager.GetExpandedSpatialGroups(spatialGroup);
+        List<int> surroundingSpatialGroups = spatialGroupManager.GetExpandedSpatialGroups(spatialGroup, Vector2.zero);
         List<Enemy> surroundingEnemies = spatialGroupManager.GetAllEnemiesInSpatialGroups(surroundingSpatialGroups);
 
         foreach (Enemy enemy in surroundingEnemies)

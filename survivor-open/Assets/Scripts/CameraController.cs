@@ -1,15 +1,17 @@
 using System.Collections;
 using UnityEngine;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
-public class CameraController : MonoBehaviour
+public class CameraController : MonoBehaviour, IControllable
 {
     private PlayerController player;
     private WaitForEndOfFrame endOfFrame;
 
-    public void Initialize(PlayerController _player)
+
+    public void Initialize(IControllable[] _injectedElements)
     {
         endOfFrame = new WaitForEndOfFrame();
-        this.player = _player;
+        this.player = _injectedElements[0] as PlayerController;
 
         StartCoroutine(MoveCamera());
     }
