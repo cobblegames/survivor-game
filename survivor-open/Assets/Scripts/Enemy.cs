@@ -63,6 +63,15 @@ public class Enemy : MonoBehaviour, IMovable, IControllable
         {
             currentMovementDirection = playerController.transform.position - transform.position;
             currentMovementDirection.Normalize();
+
+            // Flip the sprite based on the x-axis direction
+            if (currentMovementDirection.x != 0)
+            {
+                Vector3 localScale = transform.localScale;
+                localScale.x = Mathf.Abs(localScale.x) * Mathf.Sign(currentMovementDirection.x); // Flip based on direction
+                transform.localScale = localScale;
+            }
+
             transform.position += currentMovementDirection * Time.deltaTime * currentSpeed;
           
             int newSpatialGroup = spatialGroupManager.GetSpatialGroup(transform.position.x, transform.position.y); // GET spatial group

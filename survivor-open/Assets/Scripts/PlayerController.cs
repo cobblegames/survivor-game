@@ -97,10 +97,25 @@ public class PlayerController : MonoBehaviour, IControllable
 
     private IEnumerator PlayerMainLoop()
     {
+        float previousDirectionX = 0f; // Track the previous horizontal direction
+        Vector3 movementVector = Vector3.zero;
+
+
         while (gameIsStarted)
         {
-            Vector3 movementVector = Vector3.zero;
+           
+           
+
             movementVector = move.action.ReadValue<Vector2>();
+
+            if (movementVector.x != 0 && Mathf.Sign(movementVector.x) != Mathf.Sign(previousDirectionX))
+            {
+                Vector3 localScale = transform.localScale;
+                localScale.x = Mathf.Abs(localScale.x) * -Mathf.Sign(movementVector.x);
+                transform.localScale = localScale;
+                previousDirectionX = movementVector.x;
+            }
+
 
             transform.position += movementVector.normalized * Time.deltaTime * currentMovementSpeed;
 
