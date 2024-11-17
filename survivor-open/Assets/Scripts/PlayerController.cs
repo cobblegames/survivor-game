@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviour, IControllable
 {
 
     [SerializeField] private HealthBar healthBar;
@@ -51,9 +51,9 @@ public class PlayerController : MonoBehaviour
         set { noNearbyEnemies = value; }
     }
 
-    public void Initialize(SpatialGroupManager manager)
+    public void Initialize(IControllable[] _injectedElements)
     {
-        this.spatialGroupManager = manager;
+        this.spatialGroupManager = _injectedElements[0] as SpatialGroupManager;
 
         spatialGroup = spatialGroupManager.GetSpatialGroup(transform.position.x, transform.position.y);
 
@@ -68,6 +68,7 @@ public class PlayerController : MonoBehaviour
             Debug.LogError("Player Data is missing");
         }
     }
+
 
     private void OnEnable()
     {
@@ -205,4 +206,5 @@ public class PlayerController : MonoBehaviour
     {
         GameEvents.StopGame();
     }
+
 }

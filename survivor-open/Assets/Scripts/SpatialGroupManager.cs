@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 //! MIN HEAP FOR BATCH //
 public class BatchScore : System.IComparable<BatchScore>
@@ -31,7 +32,7 @@ public class BatchScore : System.IComparable<BatchScore>
     }
 }
 
-public class SpatialGroupManager : MonoBehaviour
+public class SpatialGroupManager : MonoBehaviour, IControllable
 {
     public SpatialGroupsData spatialData;
 
@@ -77,10 +78,11 @@ public class SpatialGroupManager : MonoBehaviour
         GameEvents.OnStartGame -= InitializeBatches;
     }
 
-    public void Initialize(PlayerController _player)
+    public void Initialize(IControllable[] _injectedElements)
     {
-        this.playerControllerReference = _player;
+        this.playerControllerReference = _injectedElements[0] as PlayerController;
     }
+
 
     private void InitializeBatches()
     {
@@ -374,4 +376,6 @@ public class SpatialGroupManager : MonoBehaviour
         // Calculate the final index
         return xIndex + yIndex * cellsPerRow;
     }
+
+  
 }
