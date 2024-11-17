@@ -76,7 +76,7 @@ public class Enemy : MonoBehaviour, IMovable, IControllable
         }
     }
 
-    public void OnceEveryCertainInterval()
+    public void IntervalLogic()
     {
         PushNearbyEnemies();
     }

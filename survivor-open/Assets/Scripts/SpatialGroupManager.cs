@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEditor.Experimental.GraphView.GraphView;
+
 
 //! MIN HEAP FOR BATCH //
 public class BatchScore : System.IComparable<BatchScore>
@@ -128,7 +128,7 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
             }
 
             SpawnEnemies();
-            RunBatchLogic((int)(runLogicTimer * 1)); // runLogicTimer is the batchID, for that set of enemies
+            RunBatchLogic((int)(runLogicTimer)); // runLogicTimer is the batchID, for that set of enemies
 
             yield return waitForEndOfFrame;
         }
@@ -141,7 +141,7 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
         // Run logic for all enemies in batch
         foreach (Enemy enemy in enemyBatches[batchID])
         {
-            if (enemy) enemy.RunEnemyLogic();
+            if (enemy) enemy.EveryFrameLogic();
         }
 
         // TODO: Clean out previous batch?
@@ -312,7 +312,10 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
         enemyScript.BatchID = batchToBeAdded;
         enemyBatches[batchToBeAdded].Add(enemyScript);
 
-        enemyScript.Initialize(this, playerControllerReference); //Inject dependency
+   
+
+        enemyScript.Initialize(new IControllable[] { this, playerControllerReference });
+
     }
 
     private Vector2 GetPartitionCenterDynamic(int partition, float mapWidth, float mapHeight, int totalPartitions)

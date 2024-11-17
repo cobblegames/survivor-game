@@ -32,12 +32,12 @@ public class Bullet : MonoBehaviour, IMovable
 
     public void Initialize(SpatialGroupManager _spatialGroupManager)
     {
-        spatialGroupManager = _spatialGroupManager;
-        spatialGroup = spatialGroupManager.GetSpatialGroupStatic(transform.position.x, transform.position.y);
-        surroundingSpatialGroups = spatialGroupManager.GetExpandedSpatialGroups(spatialGroup, movementDirection);
+        //spatialGroupManager = _spatialGroupManager;
+        //spatialGroup = spatialGroupManager.GetSpatialGroupStatic(transform.position.x, transform.position.y);
+        //surroundingSpatialGroups = spatialGroupManager.GetExpandedSpatialGroups(spatialGroup, movementDirection);
 
-        // Trigger the spawn event
-        OnBulletSpawned?.Invoke();
+        //// Trigger the spawn event
+        //OnBulletSpawned?.Invoke();
     }
 
     public void EveryFrameLogic()
@@ -65,15 +65,15 @@ public class Bullet : MonoBehaviour, IMovable
 
     private void UpdateSpatialGroup()
     {
-        int newSpatialGroup = spatialGroupManager.GetSpatialGroupStatic(transform.position.x, transform.position.y);
-        if (newSpatialGroup != spatialGroup)
-        {
-            spatialGroupManager.bulletSpatialGroups[spatialGroup].Remove(this);
+        //int newSpatialGroup = spatialGroupManager.GetSpatialGroupStatic(transform.position.x, transform.position.y);
+        //if (newSpatialGroup != spatialGroup)
+        //{
+        //    spatialGroupManager.bulletSpatialGroups[spatialGroup].Remove(this);
 
-            spatialGroup = newSpatialGroup;
-            spatialGroupManager.bulletSpatialGroups[spatialGroup].Add(this);
-            surroundingSpatialGroups = spatialGroupManager.GetExpandedSpatialGroups(spatialGroup, movementDirection);
-        }
+        //    spatialGroup = newSpatialGroup;
+        //    spatialGroupManager.bulletSpatialGroups[spatialGroup].Add(this);
+        //    surroundingSpatialGroups = spatialGroupManager.GetExpandedSpatialGroups(spatialGroup, movementDirection);
+        //}
     }
 
     private void CheckCollisionWithEnemy()
@@ -94,20 +94,20 @@ public class Bullet : MonoBehaviour, IMovable
         }
     }
 
-    public void OnceEveryCertainInterval()
+    public void IntervalLogic()
     {
-        if (!isDestroyed && spatialGroupManager.IsOutOfBounds((Vector2)transform.position))
-        {
-            DestroyBullet();
-        }
+        //if (!isDestroyed && spatialGroupManager.IsOutOfBounds((Vector2)transform.position))
+        //{
+        //    DestroyBullet();
+        //}
     }
 
     private void DestroyBullet()
     {
-        if (isDestroyed) return;
+        //if (isDestroyed) return;
 
-        spatialGroupManager.bulletSpatialGroups[spatialGroup].Remove(this);
-        Destroy(gameObject);
-        isDestroyed = true;
+        //spatialGroupManager.bulletSpatialGroups[spatialGroup].Remove(this);
+        //Destroy(gameObject);
+        //isDestroyed = true;
     }
 }
