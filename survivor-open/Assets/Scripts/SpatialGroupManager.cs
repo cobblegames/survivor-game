@@ -47,8 +47,8 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
     private Dictionary<int, BatchScore> batchScoreMap_Enemy = new Dictionary<int, BatchScore>();
 
     // Spawning enemies
-    public GameObject enemyPF;
-    public Transform enemyHolder;
+//    public GameObject enemyPF;
+ //   public Transform enemyHolder;
 
     private float enemySpawnTimer = 0f;
     private float enemySpawnTimerCD = 0f;
@@ -287,7 +287,7 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
     {
         enemySpawnTimer += Time.deltaTime;
 
-        if (enemySpawnTimer > enemySpawnTimerCD && enemyHolder.childCount < spatialData.MaxEnemyCount)
+        if (enemySpawnTimer > enemySpawnTimerCD && PoolManager.Instance.EnemyHolder.childCount < spatialData.MaxEnemyCount)
         {
             for (int i = 0; i < 10; i++)
             {
@@ -354,10 +354,8 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
         float xVal = Random.Range(centerOfSpatialGroup.x - sizeOfOneSpatialGroup / 2, centerOfSpatialGroup.x + sizeOfOneSpatialGroup / 2);
         float yVal = Random.Range(centerOfSpatialGroup.y - sizeOfOneSpatialGroup / 2, centerOfSpatialGroup.y + sizeOfOneSpatialGroup / 2);
 
-        GameObject enemyGO = Instantiate(enemyPF, enemyHolder);
-        enemyGO.transform.position = new Vector3(xVal, yVal, 0);
-        enemyGO.transform.parent = enemyHolder;
-
+       
+        GameObject enemyGO = PoolManager.Instance.SpawnFromPool("Skeleton", new Vector3(xVal, yVal, 0), Quaternion.identity.normalized);
         Enemy enemyScript = enemyGO.GetComponent<Enemy>();
 
         // Spatial group
