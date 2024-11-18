@@ -38,9 +38,9 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
     // Enemy logic
     private Dictionary<int, List<Enemy>> enemyBatches = new Dictionary<int, List<Enemy>>();
 
-    // For enemies
-    public Dictionary<int, HashSet<Enemy>> enemySpatialGroups = new Dictionary<int, HashSet<Enemy>>();
 
+    public Dictionary<int, HashSet<Enemy>> enemySpatialGroups = new Dictionary<int, HashSet<Enemy>>();
+    public Dictionary<int, HashSet<Bullet>> bulletSpatialGroups = new Dictionary<int, HashSet<Bullet>>();
     private SortedSet<BatchScore> batchQueue_Enemy = new SortedSet<BatchScore>();
 
     // Keeps track of the current score of each batch
@@ -48,12 +48,10 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
 
     // Spawning enemies
     public GameObject enemyPF;
-
     public Transform enemyHolder;
 
     private float enemySpawnTimer = 0f;
     private float enemySpawnTimerCD = 0f;
-    private int maxEnemyCount = 10000;
 
     private float runLogicTimer = 0f;
     private float runLogicTimerCD = 1f;
@@ -64,12 +62,13 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
     private int mapHeightMax = -1;
 
     // For get spatial group STATIC (more efficient) calculations
-    int CELLS_PER_ROW_STATIC;
-    int CELLS_PER_COLUMN_STATIC; // Square grid assumption
-    float CELL_WIDTH_STATIC;
-    float CELL_HEIGHT_STATIC;
-    int HALF_WIDTH_STATIC;
-    int HALF_HEIGHT_STATIC;
+    private int CELLS_PER_ROW_STATIC;
+
+    private int CELLS_PER_COLUMN_STATIC; // Square grid assumption
+    private float CELL_WIDTH_STATIC;
+    private float CELL_HEIGHT_STATIC;
+    private int HALF_WIDTH_STATIC;
+    private int HALF_HEIGHT_STATIC;
 
     private PlayerController playerControllerReference;
     private WaitForEndOfFrame waitForEndOfFrame = new WaitForEndOfFrame();
@@ -107,10 +106,10 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
             enemySpatialGroups.Add(i, new HashSet<Enemy>());
         }
 
-        for (int i = 0; i < spatialData.InitEnemyCount; i++)
-        {
-            SpawnEnemy();
-        }
+        //for (int i = 0; i < spatialData.InitEnemyCount; i++)
+        //{
+        //    SpawnEnemy();
+        //}
 
         // Set map bounds
         mapWidthMin = -spatialData.SpatialGroupWidth / 2;
@@ -129,7 +128,7 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
         StartCoroutine(SpatialManagerMainCoroutiune());
     }
 
-    private IEnumerator SpatialManagerMainCoroutiune()// 50 frames per second
+    private IEnumerator SpatialManagerMainCoroutiune()
     {
         while (playerControllerReference != null)
         {
@@ -137,11 +136,12 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
 
             if (runLogicTimer >= runLogicTimerCD)
             {
+                RunIntervalLogic((int)(runLogicTimer));
                 runLogicTimer = 0f;
             }
 
             SpawnEnemies();
-            RunBatchLogic((int)(runLogicTimer)); // runLogicTimer is the batchID, for that set of enemies
+            RunEveryFrameLogic((int)(runLogicTimer));
 
             yield return waitForEndOfFrame;
         }
@@ -149,15 +149,22 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
         Debug.Log("Player is absent - probably dead or quit");
     }
 
-    private void RunBatchLogic(int batchID)
+    private void RunIntervalLogic(int batchID)
+    {
+        // Run logic for all enemies in batch
+        foreach (Enemy enemy in enemyBatches[batchID])
+        {
+            if (enemy) enemy.IntervalLogic();
+        }
+    }
+
+    private void RunEveryFrameLogic(int batchID)
     {
         // Run logic for all enemies in batch
         foreach (Enemy enemy in enemyBatches[batchID])
         {
             if (enemy) enemy.EveryFrameLogic();
         }
-
-        // TODO: Clean out previous batch?
     }
 
     public List<Enemy> GetAllEnemiesInSpatialGroups(List<int> spatialGroups)
@@ -176,6 +183,7 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
 
         return enemies;
     }
+
     public List<int> GetExpandedSpatialGroups(int spatialGroup, Vector2 direction)
     {
         List<int> expandedSpatialGroups = new List<int>() { spatialGroup };
@@ -186,12 +194,10 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
         int widthRange = spatialData.SpatialGroupWidth;  // ex. 100
         int heightRange = spatialData.SpatialGroupHeight; // ex. 100
 
-
         bool isLeft = spatialGroup % widthRange == 0;
         bool isRight = spatialGroup % widthRange == widthRange - 1;
         bool isTop = spatialGroup / widthRange == heightRange - 1;
         bool isBottom = spatialGroup / widthRange == 0;
-
 
         // Sides
         if (!isTop && goingTop) expandedSpatialGroups.Add(spatialGroup + widthRange);
@@ -281,7 +287,7 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
     {
         enemySpawnTimer += Time.deltaTime;
 
-        if (enemySpawnTimer > enemySpawnTimerCD && enemyHolder.childCount < maxEnemyCount)
+        if (enemySpawnTimer > enemySpawnTimerCD && enemyHolder.childCount < spatialData.MaxEnemyCount)
         {
             for (int i = 0; i < 10; i++)
             {
@@ -318,6 +324,13 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
         else return -1;
     }
 
+    /*  
+       X X X X X    < Expanded 
+       X X X X X
+       X X P X X
+       X X X X X
+       X X X X X
+     */
     private void SpawnEnemy()
     {
         //! Which batch should it be added?
@@ -421,7 +434,6 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
         return xIndex + yIndex * cellsPerRow;
     }
 
-   
     public int GetSpatialGroupStatic(float xPos, float yPos)
     {
         // Adjust positions to map's coordinate system
@@ -435,7 +447,4 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
         // Calculate the final index
         return xIndex + yIndex * CELLS_PER_ROW_STATIC;
     }
-
-
-
 }

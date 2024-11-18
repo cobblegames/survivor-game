@@ -21,9 +21,7 @@ public class CameraController : MonoBehaviour, IControllable
         while (player != null)
         {
             Vector3 targetPosition = player.transform.position;
-
             transform.position = new Vector3(targetPosition.x, targetPosition.y, -10);
-
             yield return endOfFrame;
         }
     }

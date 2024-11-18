@@ -78,7 +78,6 @@ public class Enemy : MonoBehaviour, IMovable, IControllable
             if (newSpatialGroup != spatialGroup)
             {
                 spatialGroupManager.enemySpatialGroups[spatialGroup].Remove(this); // REMOVE from old spatial group
-
                 spatialGroup = newSpatialGroup; // UPDATE current spatial group
                 spatialGroupManager.enemySpatialGroups[spatialGroup].Add(this); // ADD to new spatial group
             }

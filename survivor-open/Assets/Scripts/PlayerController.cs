@@ -5,45 +5,37 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour, IControllable
 {
-
+    [Header("UI Elements")]
     [SerializeField] private HealthBar healthBar;
 
-    private bool gameIsStarted;
-    private SpatialGroupManager spatialGroupManager;
-
-    // Stats
-
+    [Header("Drag to Inspector Elements")]
+    [SerializeField] private InputActionReference move;
     [SerializeField] private PlayerData playerData;
 
-    [Header("Input Actions")]
-    [SerializeField] private InputActionReference move;
-
+    #region private variables 
     private int currentHealth = 100;
     private float currentMovementSpeed = 4f;
     private float currentHitBoxRadius = 0.4f;
-
-    // Spatial groups
+    private SpatialGroupManager spatialGroupManager;
     private int spatialGroup = -1;
-
-    public int SpatialGroup
-    { get { return spatialGroup; } }
-
-    // Taking damage from enemy
     private int takeDamageEveryXFrames = 0;
     private int takeDamageEveryXFramesCD = 10;
+    private bool gameIsStarted;
 
     // Nearest enemy position (for weapons)
     private Vector2 nearestEnemyPosition = Vector2.zero;
+    private bool noNearbyEnemies = false;
+    private WaitForEndOfFrame waitForEndOfFrame = new WaitForEndOfFrame();
+    #endregion
 
+    #region Public Getters and Setters
     public Vector2 NearestEnemyPosition
     {
         get { return nearestEnemyPosition; }
         set { nearestEnemyPosition = value; }
     }
-
-    private bool noNearbyEnemies = false;
-
-    private WaitForEndOfFrame waitForEndOfFrame = new WaitForEndOfFrame();
+    public int SpatialGroup
+    { get { return spatialGroup; } }
 
     public bool NoNearbyEnemies
     {
@@ -51,10 +43,23 @@ public class PlayerController : MonoBehaviour, IControllable
         set { noNearbyEnemies = value; }
     }
 
+    #endregion
+
+    private void OnEnable()
+    {
+        GameEvents.OnStartGame += Handle_StartGame;
+        GameEvents.OnStopGame += Handle_StopGame;
+    }
+
+    private void OnDisable()
+    {
+        GameEvents.OnStartGame -= Handle_StartGame;
+        GameEvents.OnStopGame -= Handle_StopGame;
+    }
+
     public void Initialize(IControllable[] _injectedElements)
     {
         this.spatialGroupManager = _injectedElements[0] as SpatialGroupManager;
-
         spatialGroup = spatialGroupManager.GetSpatialGroup(transform.position.x, transform.position.y);
 
         if (playerData != null)
@@ -67,19 +72,6 @@ public class PlayerController : MonoBehaviour, IControllable
         {
             Debug.LogError("Player Data is missing");
         }
-    }
-
-
-    private void OnEnable()
-    {
-        GameEvents.OnStartGame += Handle_StartGame;
-        GameEvents.OnStopGame += Handle_StopGame;
-    }
-
-    private void OnDisable()
-    {
-        GameEvents.OnStartGame -= Handle_StartGame;
-        GameEvents.OnStopGame -= Handle_StopGame;
     }
 
     private void Handle_StartGame()
@@ -103,9 +95,6 @@ public class PlayerController : MonoBehaviour, IControllable
 
         while (gameIsStarted)
         {
-           
-           
-
             movementVector = move.action.ReadValue<Vector2>();
 
             if (movementVector.x != 0 && Mathf.Sign(movementVector.x) != Mathf.Sign(previousDirectionX))
@@ -115,7 +104,6 @@ public class PlayerController : MonoBehaviour, IControllable
                 transform.localScale = localScale;
                 previousDirectionX = movementVector.x;
             }
-
 
             transform.position += movementVector.normalized * Time.deltaTime * currentMovementSpeed;
 

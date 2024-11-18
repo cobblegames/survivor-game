@@ -15,10 +15,10 @@ public class Bullet : MonoBehaviour, IMovable, IControllable
     private Vector2 movementDirection = Vector2.zero;
     private List<int> surroundingSpatialGroups = new List<int>();
 
-    private bool isDestroyed = false;
-
+    //private bool isDestroyed = false;
 
     public delegate void BulletEnemyContactAction(Transform parentBullet);
+
     public event BulletEnemyContactAction OnContactWithEnemy;
 
     public Vector2 MovementDirection
@@ -28,14 +28,14 @@ public class Bullet : MonoBehaviour, IMovable, IControllable
     }
 
     public void Initialize(IControllable[] _injectedElements)
-    {  spatialGroupManager = _injectedElements[0] as SpatialGroupManager;
-       spatialGroup = spatialGroupManager.GetSpatialGroupStatic(transform.position.x, transform.position.y);
-       surroundingSpatialGroups = spatialGroupManager.GetExpandedSpatialGroups(spatialGroup, movementDirection);
+    {
+        spatialGroupManager = _injectedElements[0] as SpatialGroupManager;
+        spatialGroup = spatialGroupManager.GetSpatialGroupStatic(transform.position.x, transform.position.y);
+        surroundingSpatialGroups = spatialGroupManager.GetExpandedSpatialGroups(spatialGroup, movementDirection);
 
         //// Trigger the spawn event
         //OnBulletSpawned?.Invoke();
     }
-
 
     public void EveryFrameLogic()
     {
@@ -62,15 +62,15 @@ public class Bullet : MonoBehaviour, IMovable, IControllable
 
     private void UpdateSpatialGroup()
     {
-        //int newSpatialGroup = spatialGroupManager.GetSpatialGroupStatic(transform.position.x, transform.position.y);
-        //if (newSpatialGroup != spatialGroup)
-        //{
-        //    spatialGroupManager.bulletSpatialGroups[spatialGroup].Remove(this);
+        int newSpatialGroup = spatialGroupManager.GetSpatialGroupStatic(transform.position.x, transform.position.y);
+        if (newSpatialGroup != spatialGroup)
+        {
+            spatialGroupManager.bulletSpatialGroups[spatialGroup].Remove(this);
 
-        //    spatialGroup = newSpatialGroup;
-        //    spatialGroupManager.bulletSpatialGroups[spatialGroup].Add(this);
-        //    surroundingSpatialGroups = spatialGroupManager.GetExpandedSpatialGroups(spatialGroup, movementDirection);
-        //}
+            spatialGroup = newSpatialGroup;
+            spatialGroupManager.bulletSpatialGroups[spatialGroup].Add(this);
+            surroundingSpatialGroups = spatialGroupManager.GetExpandedSpatialGroups(spatialGroup, movementDirection);
+        }
     }
 
     private void CheckCollisionWithEnemy()
