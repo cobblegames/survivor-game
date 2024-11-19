@@ -222,6 +222,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerScript: {fileID: 221338573}
   spatialGroupManager: {fileID: 1344451999}
+  poolManager: {fileID: 1421153759}
   cameraController: {fileID: 519420033}
 --- !u!4 &328636045
 Transform:
@@ -1034,8 +1035,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spatialData: {fileID: 11400000, guid: 8dc8bb1bdc0e03546bbf77c3dd7f8e2c, type: 2}
-  enemyPF: {fileID: 8922118648365879624, guid: 3159be499fc08e64b836271473c4dd5b, type: 3}
-  enemyHolder: {fileID: 910409726}
 --- !u!1 &1361459971
 GameObject:
   m_ObjectHideFlags: 0
@@ -1120,6 +1119,7 @@ MonoBehaviour:
   - poolName: Skeleton
     prefab: {fileID: 8922118648365879624, guid: 3159be499fc08e64b836271473c4dd5b, type: 3}
     size: 1
+  poolObjectHolder: {fileID: 1421153758}
   enemyHolder: {fileID: 910409726}
 --- !u!1 &1807433388
 GameObject:

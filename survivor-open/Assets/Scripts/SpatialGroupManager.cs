@@ -46,9 +46,6 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
     // Keeps track of the current score of each batch
     private Dictionary<int, BatchScore> batchScoreMap_Enemy = new Dictionary<int, BatchScore>();
 
-    // Spawning enemies
-//    public GameObject enemyPF;
- //   public Transform enemyHolder;
 
     private float enemySpawnTimer = 0f;
     private float enemySpawnTimerCD = 0f;
@@ -70,7 +67,8 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
     private int HALF_WIDTH_STATIC;
     private int HALF_HEIGHT_STATIC;
 
-    private PlayerController playerControllerReference;
+    private PlayerController playerController;
+    private PoolManager poolManager;
     private WaitForEndOfFrame waitForEndOfFrame = new WaitForEndOfFrame();
 
     private void OnEnable()
@@ -85,7 +83,8 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
 
     public void Initialize(IControllable[] _injectedElements)
     {
-        this.playerControllerReference = _injectedElements[0] as PlayerController;
+        this.playerController = _injectedElements[0] as PlayerController;
+        this.poolManager = _injectedElements[1] as PoolManager;
     }
 
     private void InitializeBatches()
@@ -130,18 +129,25 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
 
     private IEnumerator SpatialManagerMainCoroutiune()
     {
-        while (playerControllerReference != null)
+        while (playerController != null)
         {
             runLogicTimer += Time.deltaTime;
 
             if (runLogicTimer >= runLogicTimerCD)
             {
-                RunIntervalLogic((int)(runLogicTimer));
+                for (int i = 0; i < enemyBatches.Count; i++)
+                {
+                    RunIntervalLogic(i);
+                }
                 runLogicTimer = 0f;
             }
 
             SpawnEnemies();
-            RunEveryFrameLogic((int)(runLogicTimer));
+            for(int i = 0; i<enemyBatches.Count; i++)
+            { 
+               RunEveryFrameLogic(i); 
+            }
+          
 
             yield return waitForEndOfFrame;
         }
@@ -164,6 +170,7 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
         foreach (Enemy enemy in enemyBatches[batchID])
         {
             if (enemy) enemy.EveryFrameLogic();
+            else Debug.LogError("Enemy is null");
         }
     }
 
@@ -287,13 +294,10 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
     {
         enemySpawnTimer += Time.deltaTime;
 
-        if (enemySpawnTimer > enemySpawnTimerCD && PoolManager.Instance.EnemyHolder.childCount < spatialData.MaxEnemyCount)
+        if (enemySpawnTimer > enemySpawnTimerCD && poolManager.EnemyHolder.childCount < spatialData.MaxEnemyCount)
         {
-            for (int i = 0; i < 10; i++)
-            {
-                SpawnEnemy();
-            }
-
+            SpawnEnemy();
+            
             enemySpawnTimer = 0f;
         }
     }
@@ -337,7 +341,7 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
         int batchToBeAdded = GetBestBatch("enemy");
 
         // Get the QUADRANT of the player (25 quadrants in the map)
-        int playerQuadrant = GetSpatialGroupDynamic(playerControllerReference.transform.position.x, playerControllerReference.transform.position.y, spatialData.SpatialGroupWidth, spatialData.SpatialGroupHeight, 25);
+        int playerQuadrant = GetSpatialGroupDynamic(playerController.transform.position.x, playerController.transform.position.y, spatialData.SpatialGroupWidth, spatialData.SpatialGroupHeight, 25);
         List<int> expandedSpatialGroups = GetExpandedSpatialGroups(playerQuadrant, 25);
 
         // Remove the quadrant player is in
@@ -355,9 +359,10 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
         float yVal = Random.Range(centerOfSpatialGroup.y - sizeOfOneSpatialGroup / 2, centerOfSpatialGroup.y + sizeOfOneSpatialGroup / 2);
 
        
-        GameObject enemyGO = PoolManager.Instance.SpawnFromPool("Skeleton", new Vector3(xVal, yVal, 0), Quaternion.identity.normalized);
+        GameObject enemyGO = Instantiate(poolManager.SpawnFromPool("Skeleton"),poolManager.EnemyHolder);
         Enemy enemyScript = enemyGO.GetComponent<Enemy>();
-
+        enemyGO.transform.position = new Vector3(xVal, yVal, 0);
+        enemyGO.SetActive(true);
         // Spatial group
         int spatialGroup = GetSpatialGroup(enemyGO.transform.position.x, enemyGO.transform.position.y);
         enemyScript.SpatialGroup = spatialGroup;
@@ -367,7 +372,7 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
         enemyScript.BatchID = batchToBeAdded;
         enemyBatches[batchToBeAdded].Add(enemyScript);
 
-        enemyScript.Initialize(new IControllable[] { this, playerControllerReference });
+        enemyScript.Initialize(new IControllable[] { this, playerController });
     }
 
     private Vector2 GetPartitionCenterDynamic(int partition, float mapWidth, float mapHeight, int totalPartitions)

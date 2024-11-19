@@ -14,7 +14,7 @@ public class Enemy : MonoBehaviour, IMovable, IControllable
 
     [SerializeField] private EnemyData enemyData;
 
-    private float currentSpeed;
+    [SerializeField] private float currentSpeed;
     private int currentHealth;
     private int currentDamage;
 
@@ -36,11 +36,11 @@ public class Enemy : MonoBehaviour, IMovable, IControllable
     private SpatialGroupManager spatialGroupManager;
     private PlayerController playerController;
 
-
     public void Initialize(IControllable[] _argTable)
     {
         this.spatialGroupManager = _argTable[0] as SpatialGroupManager;
         this.playerController = _argTable[1] as PlayerController;
+
 
         if (enemyData != null) 
         {
@@ -81,6 +81,9 @@ public class Enemy : MonoBehaviour, IMovable, IControllable
                 spatialGroup = newSpatialGroup; // UPDATE current spatial group
                 spatialGroupManager.enemySpatialGroups[spatialGroup].Add(this); // ADD to new spatial group
             }
+        }else
+        {
+            Debug.LogError("Player is null");
         }
     }
 
@@ -125,10 +128,12 @@ public class Enemy : MonoBehaviour, IMovable, IControllable
     {
         Debug.Log("Enemy Killed");
 
-        spatialGroupManager.RemoveFromSpatialGroup(batchId, this);
+      
 
+        spatialGroupManager.RemoveFromSpatialGroup(batchId, this);
         spatialGroupManager.enemySpatialGroups[spatialGroup].Remove(this);
 
+     
         Destroy(gameObject);
     }
 }
