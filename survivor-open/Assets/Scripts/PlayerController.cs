@@ -12,10 +12,14 @@ public class PlayerController : MonoBehaviour, IControllable
     [SerializeField] private InputActionReference move;
     [SerializeField] private PlayerData playerData;
 
+  
+ 
+
     #region private variables 
     private int currentHealth = 100;
     private float currentMovementSpeed = 4f;
     private float currentHitBoxRadius = 0.4f;
+
     private SpatialGroupManager spatialGroupManager;
     private int spatialGroup = -1;
     private int takeDamageEveryXFrames = 0;
@@ -27,6 +31,10 @@ public class PlayerController : MonoBehaviour, IControllable
     private bool noNearbyEnemies = false;
     private WaitForEndOfFrame waitForEndOfFrame = new WaitForEndOfFrame();
     #endregion
+
+
+    [Header("Current Weapons")]
+    private Weapon[] currentWeapons;
 
     #region Public Getters and Setters
     public Vector2 NearestEnemyPosition

@@ -38,14 +38,12 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
     // Enemy logic
     private Dictionary<int, List<Enemy>> enemyBatches = new Dictionary<int, List<Enemy>>();
 
-
     public Dictionary<int, HashSet<Enemy>> enemySpatialGroups = new Dictionary<int, HashSet<Enemy>>();
     public Dictionary<int, HashSet<Bullet>> bulletSpatialGroups = new Dictionary<int, HashSet<Bullet>>();
     private SortedSet<BatchScore> batchQueue_Enemy = new SortedSet<BatchScore>();
 
     // Keeps track of the current score of each batch
     private Dictionary<int, BatchScore> batchScoreMap_Enemy = new Dictionary<int, BatchScore>();
-
 
     private float enemySpawnTimer = 0f;
     private float enemySpawnTimerCD = 0f;
@@ -143,11 +141,10 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
             }
 
             SpawnEnemies();
-            for(int i = 0; i<enemyBatches.Count; i++)
-            { 
-               RunEveryFrameLogic(i); 
+            for (int i = 0; i < enemyBatches.Count; i++)
+            {
+                RunEveryFrameLogic(i);
             }
-          
 
             yield return waitForEndOfFrame;
         }
@@ -297,7 +294,7 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
         if (enemySpawnTimer > enemySpawnTimerCD && poolManager.EnemyHolder.childCount < spatialData.MaxEnemyCount)
         {
             SpawnEnemy();
-            
+
             enemySpawnTimer = 0f;
         }
     }
@@ -328,13 +325,14 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
         else return -1;
     }
 
-    /*  
-       X X X X X    < Expanded 
+    /*
+       X X X X X    < Expanded
        X X X X X
        X X P X X
        X X X X X
        X X X X X
      */
+
     private void SpawnEnemy()
     {
         //! Which batch should it be added?
@@ -358,8 +356,7 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
         float xVal = Random.Range(centerOfSpatialGroup.x - sizeOfOneSpatialGroup / 2, centerOfSpatialGroup.x + sizeOfOneSpatialGroup / 2);
         float yVal = Random.Range(centerOfSpatialGroup.y - sizeOfOneSpatialGroup / 2, centerOfSpatialGroup.y + sizeOfOneSpatialGroup / 2);
 
-       
-        GameObject enemyGO = Instantiate(poolManager.SpawnFromPool("Skeleton"),poolManager.EnemyHolder);
+        GameObject enemyGO = Instantiate(poolManager.SpawnFromPool("Skeleton"), poolManager.EnemyHolder);
         Enemy enemyScript = enemyGO.GetComponent<Enemy>();
         enemyGO.transform.position = new Vector3(xVal, yVal, 0);
         enemyGO.SetActive(true);

@@ -1,4 +1,5 @@
 using UnityEngine;
+
 [CreateAssetMenu(menuName = "Players/Player Data", fileName = "PlayerData")]
 public class PlayerData : ScriptableObject
 {
@@ -6,14 +7,16 @@ public class PlayerData : ScriptableObject
     [SerializeField] private float movementSpeed = 4f;
     [SerializeField] private float hitBoxRadius = 0.4f;
 
+    [SerializeField] private Weapon[] defaultWeapons;
+
+    public Weapon[] DefaultWeapons   { get { return defaultWeapons; } }
+
     public int Health
-    { get { return health; } private set { health = value; } }
+    { get { return health; } }
 
     public float MovementSpeed
-    { get { return movementSpeed; } private set { movementSpeed = value; } }
+    { get { return movementSpeed; } }
 
     public float HitBoxRadius
-    { get { return hitBoxRadius; } private set { hitBoxRadius = value; } }
-
-
+    { get { return hitBoxRadius; } }
 }
