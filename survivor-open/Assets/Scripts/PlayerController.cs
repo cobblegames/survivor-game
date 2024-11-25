@@ -10,13 +10,12 @@ public class PlayerController : MonoBehaviour, IControllable
 
     [Header("Drag to Inspector Elements")]
     [SerializeField] private InputActionReference move;
+
     [SerializeField] private PlayerData playerData;
 
-  
- 
+    #region private variables
 
-    #region private variables 
-    private int currentHealth = 100;
+    private float currentHealth = 100;
     private float currentMovementSpeed = 4f;
     private float currentHitBoxRadius = 0.4f;
 
@@ -28,20 +27,23 @@ public class PlayerController : MonoBehaviour, IControllable
 
     // Nearest enemy position (for weapons)
     private Vector2 nearestEnemyPosition = Vector2.zero;
+
     private bool noNearbyEnemies = false;
     private WaitForEndOfFrame waitForEndOfFrame = new WaitForEndOfFrame();
-    #endregion
 
+    #endregion private variables
 
     [Header("Current Weapons")]
-   [SerializeField] private Weapon[] currentWeapons;
+    [SerializeField] private Weapon[] currentWeapons;
 
     #region Public Getters and Setters
+
     public Vector2 NearestEnemyPosition
     {
         get { return nearestEnemyPosition; }
         set { nearestEnemyPosition = value; }
     }
+
     public int SpatialGroup
     { get { return spatialGroup; } }
 
@@ -51,7 +53,7 @@ public class PlayerController : MonoBehaviour, IControllable
         set { noNearbyEnemies = value; }
     }
 
-    #endregion
+    #endregion Public Getters and Setters
 
     private void OnEnable()
     {
@@ -100,7 +102,6 @@ public class PlayerController : MonoBehaviour, IControllable
         float previousDirectionX = 0f; // Track the previous horizontal direction
         Vector3 movementVector = Vector3.zero;
 
-
         while (gameIsStarted)
         {
             movementVector = move.action.ReadValue<Vector2>();
@@ -147,7 +148,7 @@ public class PlayerController : MonoBehaviour, IControllable
             if (distance < currentHitBoxRadius)
             {
                 // Take damage
-                ModifyHealth(-enemy.Damage);
+                ModifyHealth(enemy.Damage);
 
                 break;
             }
@@ -202,10 +203,10 @@ public class PlayerController : MonoBehaviour, IControllable
         }
     }
 
-    public void ModifyHealth(int amount)
+    public void ModifyHealth(float amount)
     {
-        currentHealth += amount;
-        healthBar.UpdateBar((float)currentHealth/(float)playerData.Health);
+        currentHealth -= amount;
+        healthBar.UpdateBar(currentHealth / playerData.Health);
 
         if (currentHealth <= 0)
         {
@@ -217,5 +218,4 @@ public class PlayerController : MonoBehaviour, IControllable
     {
         GameEvents.StopGame();
     }
-
 }

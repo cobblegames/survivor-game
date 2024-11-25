@@ -65,10 +65,10 @@ public class Bullet : MonoBehaviour, IMovable, IControllable
         int newSpatialGroup = spatialGroupManager.GetSpatialGroupStatic(transform.position.x, transform.position.y);
         if (newSpatialGroup != spatialGroup)
         {
-            spatialGroupManager.bulletSpatialGroups[spatialGroup].Remove(this);
+            //     spatialGroupManager.bulletSpatialGroups[spatialGroup].Remove(this);
 
             spatialGroup = newSpatialGroup;
-            spatialGroupManager.bulletSpatialGroups[spatialGroup].Add(this);
+            //    spatialGroupManager.bulletSpatialGroups[spatialGroup].Add(this);
             surroundingSpatialGroups = spatialGroupManager.GetExpandedSpatialGroups(spatialGroup, movementDirection);
         }
     }
@@ -93,7 +93,7 @@ public class Bullet : MonoBehaviour, IMovable, IControllable
 
     public void IntervalLogic()
     {
-        if(!isDestroyed && spatialGroupManager.IsOutOfBounds((Vector2)transform.position))
+        if (!isDestroyed && spatialGroupManager.IsOutOfBounds((Vector2)transform.position))
         {
             DestroyBullet();
         }
@@ -103,7 +103,7 @@ public class Bullet : MonoBehaviour, IMovable, IControllable
     {
         if (isDestroyed) return;
 
-        spatialGroupManager.bulletSpatialGroups[spatialGroup].Remove(this);
+        //   spatialGroupManager.bulletSpatialGroups[spatialGroup].Remove(this);
         Destroy(gameObject);
         isDestroyed = true;
     }

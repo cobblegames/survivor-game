@@ -1,20 +1,28 @@
 using UnityEngine;
-using System.Collections;
+
 public class Weapon : MonoBehaviour, IControllable
 {
     [SerializeField] protected WeaponData weaponData;
 
-
+    [SerializeField] protected BaseBullet bulletPrefab;
     // Core weapon properties
     protected string weaponName;
+
     protected float currentDamage;
     protected float currentAttackCoolDown;
     protected int currentMaxTargets;
     protected float currentRange;
     protected float currentCooldownTimer;
 
+
+    public float CurrentDamage
+    { get { return currentDamage; } private set { currentDamage = value; } }
+
+
+    public int CurrentMaxTargets
+    { get { return currentMaxTargets; } private set { currentMaxTargets = value; } }
+
     protected SpatialGroupManager spatialGroupManager;
- 
 
     public virtual void Initialize(IControllable[] _injectedElements)
     {
@@ -29,10 +37,8 @@ public class Weapon : MonoBehaviour, IControllable
 
     public virtual void Attack(Vector3 origin, Vector3 direction)
     {
-       
-            PerformAttack(origin, direction);
-            currentCooldownTimer = currentAttackCoolDown;
-        
+        PerformAttack(origin, direction);
+        currentCooldownTimer = currentAttackCoolDown;
     }
 
     public virtual bool CanAttack() // all weapons will be processed in one loop
@@ -41,17 +47,14 @@ public class Weapon : MonoBehaviour, IControllable
         {
             currentCooldownTimer -= Time.deltaTime;
             return false;
-        }else
+        }
+        else
         {
             return true;
         }
-            
     }
 
-
     // method for specific attack logic
-    protected virtual void PerformAttack(Vector3 origin, Vector3 direction) { }
-    
-
-  
+    protected virtual void PerformAttack(Vector3 origin, Vector3 direction)
+    { }
 }

@@ -15,5 +15,5 @@ MonoBehaviour:
   weaponName: Whip
   damage: 10
   attackCooldown: 5
-  maxTargets: 0
+  maxTargets: 1
   range: 10

@@ -39,7 +39,7 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
     private Dictionary<int, List<Enemy>> enemyBatches = new Dictionary<int, List<Enemy>>();
 
     public Dictionary<int, HashSet<Enemy>> enemySpatialGroups = new Dictionary<int, HashSet<Enemy>>();
-    public Dictionary<int, HashSet<Bullet>> bulletSpatialGroups = new Dictionary<int, HashSet<Bullet>>();
+    public Dictionary<int, HashSet<IBullet>> bulletSpatialGroups = new Dictionary<int, HashSet<IBullet>>();
     private SortedSet<BatchScore> batchQueue_Enemy = new SortedSet<BatchScore>();
 
     // Keeps track of the current score of each batch

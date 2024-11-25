@@ -1,8 +1,9 @@
 using UnityEngine;
 using UnityEngine.UI;
+
 public class HealthBar : MonoBehaviour
 {
-    [SerializeField] Image barImage;
+    [SerializeField] private Image barImage;
 
     public void UpdateBar(float fillAmount)
     {

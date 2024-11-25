@@ -9,11 +9,10 @@ public class UserInterfaceManager : MonoBehaviour
 
     private void OnEnable()
     {
-        if(startButton != null)
+        if (startButton != null)
         {
             startButton.onClick.AddListener(Handle_StartButton);
         }
-        
     }
 
     private void OnDisable()
@@ -24,19 +23,17 @@ public class UserInterfaceManager : MonoBehaviour
         }
     }
 
-
     private void Handle_StartButton()
     {
         GameEvents.StartGame();
-        if(mainMenuRoot!=null)
+        if (mainMenuRoot != null)
         {
             mainMenuRoot.gameObject.SetActive(false);
         }
 
-        if(gameplayRoot!=null)
+        if (gameplayRoot != null)
         {
-            gameplayRoot.gameObject.SetActive(true);    
+            gameplayRoot.gameObject.SetActive(true);
         }
     }
-
 }

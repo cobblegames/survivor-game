@@ -1,12 +1,10 @@
 using System.Collections;
 using UnityEngine;
-using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class CameraController : MonoBehaviour, IControllable
 {
     private PlayerController player;
     private WaitForEndOfFrame endOfFrame;
-
 
     public void Initialize(IControllable[] _injectedElements)
     {

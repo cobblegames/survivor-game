@@ -3,13 +3,11 @@ using UnityEngine;
 
 public class PoolManager : MonoBehaviour, IControllable
 {
-
     [System.Serializable]
     public class Pool
     {
         public string poolName; // Identifier for the pool
         public GameObject prefab; // Enemy prefab
-     
     }
 
     [SerializeField] private List<Pool> pools;
@@ -18,19 +16,18 @@ public class PoolManager : MonoBehaviour, IControllable
     private Dictionary<string, Queue<GameObject>> poolDictionary;
     private Dictionary<GameObject, string> activeObjects; // Tracks which pool an object belongs to
 
-   [SerializeField]  private Transform enemyHolder;
+    [SerializeField] private Transform enemyHolder;
+
     public Transform EnemyHolder
     { get { return enemyHolder; } }
 
-    SpatialGroupManager spatialGroupManager;
-
+    private SpatialGroupManager spatialGroupManager;
 
     public void Initialize(IControllable[] _injectedElements)
     {
         spatialGroupManager = _injectedElements[0] as SpatialGroupManager;
         InitializePools();
     }
-
 
     private void InitializePools()
     {
@@ -42,11 +39,10 @@ public class PoolManager : MonoBehaviour, IControllable
             Queue<GameObject> objectPool = new Queue<GameObject>();
 
             // Instantiate initial objects for the pool
-        
+
             GameObject obj = Instantiate(pool.prefab, poolObjectHolder);
             obj.SetActive(false); // Deactivate the object initially
             objectPool.Enqueue(obj);
-            
 
             poolDictionary.Add(pool.poolName, objectPool);
         }
@@ -75,7 +71,4 @@ public class PoolManager : MonoBehaviour, IControllable
 
         return objectToSpawn;
     }
-
-
-   
 }

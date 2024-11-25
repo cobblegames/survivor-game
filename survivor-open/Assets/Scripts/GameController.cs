@@ -1,20 +1,18 @@
-using System.Collections.Generic;
-
 using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
-
     [SerializeField] private PlayerController playerScript;
     [SerializeField] private SpatialGroupManager spatialGroupManager;
     [SerializeField] private PoolManager poolManager;
     [SerializeField] private CameraController cameraController;
+
     public PlayerController PlayerScript
     { get { return playerScript; } }
 
     public SpatialGroupManager SpatialGroupManager
     { get { return spatialGroupManager; } }
-   
+
     private void Start()
     {
         if (!playerScript)
@@ -47,8 +45,5 @@ public class GameController : MonoBehaviour
         spatialGroupManager.Initialize(new IControllable[] { playerScript, poolManager });
         poolManager.Initialize(new IControllable[] { spatialGroupManager });
         cameraController.Initialize(new IControllable[] { playerScript });
-
-
-
     }
 }
