@@ -434,6 +434,12 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
         return xIndex + yIndex * cellsPerRow;
     }
 
+    public bool IsOutOfBounds(Vector2 _position)
+    {
+        return _position.x < mapWidthMin || _position.x > mapWidthMax ||
+               _position.y < mapHeightMin || _position.y > mapHeightMax;
+    }
+
     public int GetSpatialGroupStatic(float xPos, float yPos)
     {
         // Adjust positions to map's coordinate system

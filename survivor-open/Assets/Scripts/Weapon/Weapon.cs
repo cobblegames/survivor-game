@@ -49,7 +49,7 @@ public class Weapon : MonoBehaviour, IControllable
     }
 
 
-    // Abstract method for specific attack logic
+    // method for specific attack logic
     protected virtual void PerformAttack(Vector3 origin, Vector3 direction) { }
     
 

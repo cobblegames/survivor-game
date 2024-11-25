@@ -34,7 +34,7 @@ public class PlayerController : MonoBehaviour, IControllable
 
 
     [Header("Current Weapons")]
-    private Weapon[] currentWeapons;
+   [SerializeField] private Weapon[] currentWeapons;
 
     #region Public Getters and Setters
     public Vector2 NearestEnemyPosition

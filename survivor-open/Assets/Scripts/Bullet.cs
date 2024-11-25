@@ -15,7 +15,7 @@ public class Bullet : MonoBehaviour, IMovable, IControllable
     private Vector2 movementDirection = Vector2.zero;
     private List<int> surroundingSpatialGroups = new List<int>();
 
-    //private bool isDestroyed = false;
+    private bool isDestroyed = false;
 
     public delegate void BulletEnemyContactAction(Transform parentBullet);
 
@@ -93,18 +93,18 @@ public class Bullet : MonoBehaviour, IMovable, IControllable
 
     public void IntervalLogic()
     {
-        //if (!isDestroyed && spatialGroupManager.IsOutOfBounds((Vector2)transform.position))
-        //{
-        //    DestroyBullet();
-        //}
+        if(!isDestroyed && spatialGroupManager.IsOutOfBounds((Vector2)transform.position))
+        {
+            DestroyBullet();
+        }
     }
 
     private void DestroyBullet()
     {
-        //if (isDestroyed) return;
+        if (isDestroyed) return;
 
-        //spatialGroupManager.bulletSpatialGroups[spatialGroup].Remove(this);
-        //Destroy(gameObject);
-        //isDestroyed = true;
+        spatialGroupManager.bulletSpatialGroups[spatialGroup].Remove(this);
+        Destroy(gameObject);
+        isDestroyed = true;
     }
 }
