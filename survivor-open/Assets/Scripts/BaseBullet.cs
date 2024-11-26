@@ -1,8 +1,11 @@
+using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class BaseBullet : MonoBehaviour, IControllable, IBullet
 {
+    [SerializeField] protected float destroyTime;
     protected float inheritedDamage;
     protected float inheritedRadius;
     protected int inheritedMaxTargets;
@@ -14,6 +17,8 @@ public class BaseBullet : MonoBehaviour, IControllable, IBullet
     protected List<int> surroundingSpatialGroups = new List<int>();
     protected bool isDestroyed;
 
+    protected WaitForEndOfFrame endOfFrameInterval = new WaitForEndOfFrame();
+
     public virtual void Initialize(IControllable[] _injectedElements)
     {
         spatialGroupManager = _injectedElements[0] as SpatialGroupManager;
@@ -24,6 +29,23 @@ public class BaseBullet : MonoBehaviour, IControllable, IBullet
 
         inheritedDamage = parentWeapon.CurrentDamage;
         inheritedMaxTargets = parentWeapon.CurrentMaxTargets;
+        inheritedRange = parentWeapon.CurrentRange;
+
+    //   spatialGroupManager.bulletSpatialGroups[spatialGroup].Add(this);
+
+        StartCoroutine(MainBulletLoop());
+    }
+
+
+    IEnumerator MainBulletLoop()
+    {
+        while (!isDestroyed) 
+        {
+            EveryFrameLogic();
+
+            yield return endOfFrameInterval;
+        }
+        
     }
 
     public virtual void EveryFrameLogic()
@@ -39,29 +61,40 @@ public class BaseBullet : MonoBehaviour, IControllable, IBullet
         {
             if (enemy == null) continue;
 
-            if (Vector2.Distance(transform.position, enemy.transform.position) < inheritedRadius)
+            if(CheckHitBox(enemy))
             {
-                enemy.ChangeHealth(inheritedDamage);
                 targetCounter++;
+                DoAttack(enemy);
                 if (targetCounter >= inheritedMaxTargets)
                 {
                     DestroyBullet();
-
                     break;
                 }
-            }else
-            {
-                DestroyBullet();  
+                   
             }
+
         }
+
+        DestroyBullet();
+    }
+
+    protected virtual bool CheckHitBox(Enemy _enemy)
+    {
+        return true;
+    }
+
+    protected virtual void DoAttack(Enemy _enemy)
+    {
+        _enemy.ChangeHealth(inheritedDamage);
     }
 
     public virtual void DestroyBullet()
     {
         if (isDestroyed) return;
 
-        spatialGroupManager.bulletSpatialGroups[spatialGroup].Remove(this);
+    //
+    //spatialGroupManager.bulletSpatialGroups[spatialGroup].Remove(this);
         isDestroyed = true;
-        Destroy(gameObject);
+        Destroy(gameObject,destroyTime);
     }
 }

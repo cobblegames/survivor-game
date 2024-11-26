@@ -22,6 +22,9 @@ public class Weapon : MonoBehaviour, IControllable
     public int CurrentMaxTargets
     { get { return currentMaxTargets; } private set { currentMaxTargets = value; } }
 
+    public float CurrentRange
+    { get { return currentRange; } private set { currentRange = value; } }
+
     protected SpatialGroupManager spatialGroupManager;
 
     public virtual void Initialize(IControllable[] _injectedElements)
@@ -37,11 +40,15 @@ public class Weapon : MonoBehaviour, IControllable
 
     public virtual void Attack(Vector3 origin, Vector3 direction)
     {
-        PerformAttack(origin, direction);
-        currentCooldownTimer = currentAttackCoolDown;
+        if(CanAttack())
+        {
+            PerformAttack(origin, direction);
+            currentCooldownTimer = currentAttackCoolDown;
+        }
+       
     }
 
-    public virtual bool CanAttack() // all weapons will be processed in one loop
+    protected virtual bool CanAttack() // all weapons will be processed in one loop
     {
         if (currentCooldownTimer > 0)
         {

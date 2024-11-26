@@ -101,6 +101,7 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
         for (int i = 0; i < spatialData.NumberOfPartitions; i++)
         {
             enemySpatialGroups.Add(i, new HashSet<Enemy>());
+            bulletSpatialGroups.Add(i, new HashSet<IBullet>());
         }
 
         //for (int i = 0; i < spatialData.InitEnemyCount; i++)

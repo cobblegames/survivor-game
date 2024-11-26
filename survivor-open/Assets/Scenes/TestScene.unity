@@ -137,7 +137,7 @@ PrefabInstance:
       objectReference: {fileID: 1940060292}
     - target: {fileID: 5227644822463801514, guid: 6dd6ecfac1a004e4b9791e6154d9cbc9, type: 3}
       propertyPath: currentWeapons.Array.size
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5227644822463801514, guid: 6dd6ecfac1a004e4b9791e6154d9cbc9, type: 3}
       propertyPath: 'currentWeapons.Array.data[0]'
