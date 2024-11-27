@@ -113,6 +113,7 @@ public class Enemy : MonoBehaviour, IMovable, IControllable
     public void ChangeHealth(float amount)
     {
         currentHealth -= amount;
+        Debug.Log("Enemy Is damaged");
 
         if (currentHealth <= 0)
         {

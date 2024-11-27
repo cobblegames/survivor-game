@@ -8,10 +8,10 @@ public class EnemyData : ScriptableObject
     [SerializeField] private float movementSpeed = 1f;
 
     public float Health
-    { get { return health; }}
+    { get { return health; } }
 
     public float Damage
-    { get { return damage; }}
+    { get { return damage; } }
 
     public float MovementSpeed
     { get { return movementSpeed; } }

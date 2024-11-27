@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class BaseBullet : MonoBehaviour, IControllable, IBullet
@@ -30,22 +29,19 @@ public class BaseBullet : MonoBehaviour, IControllable, IBullet
         inheritedDamage = parentWeapon.CurrentDamage;
         inheritedMaxTargets = parentWeapon.CurrentMaxTargets;
         inheritedRange = parentWeapon.CurrentRange;
-
-    //   spatialGroupManager.bulletSpatialGroups[spatialGroup].Add(this);
+        //   Debug.Log("spatialGroup "  + spatialGroup);
 
         StartCoroutine(MainBulletLoop());
     }
 
-
-    IEnumerator MainBulletLoop()
+    private IEnumerator MainBulletLoop()
     {
-        while (!isDestroyed) 
+        while (!isDestroyed)
         {
             EveryFrameLogic();
 
             yield return endOfFrameInterval;
         }
-        
     }
 
     public virtual void EveryFrameLogic()
@@ -59,9 +55,14 @@ public class BaseBullet : MonoBehaviour, IControllable, IBullet
         int targetCounter = 0;
         foreach (Enemy enemy in surroundingEnemies)
         {
-            if (enemy == null) continue;
+            if (enemy == null)
+            {
+                Debug.Log("No enemy");
+                continue;
+            }
 
-            if(CheckHitBox(enemy))
+            Debug.Log("enemy found");
+            if (CheckHitBox(enemy))
             {
                 targetCounter++;
                 DoAttack(enemy);
@@ -70,9 +71,7 @@ public class BaseBullet : MonoBehaviour, IControllable, IBullet
                     DestroyBullet();
                     break;
                 }
-                   
             }
-
         }
 
         DestroyBullet();
@@ -92,9 +91,8 @@ public class BaseBullet : MonoBehaviour, IControllable, IBullet
     {
         if (isDestroyed) return;
 
-    //
-    //spatialGroupManager.bulletSpatialGroups[spatialGroup].Remove(this);
+        spatialGroupManager.bulletSpatialGroups[spatialGroup].Remove(this);
         isDestroyed = true;
-        Destroy(gameObject,destroyTime);
+        Destroy(gameObject, destroyTime);
     }
 }

@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -80,12 +79,11 @@ public class PlayerController : MonoBehaviour, IControllable
             currentHitBoxRadius = playerData.HitBoxRadius;
 
             currentWeapons = new Weapon[playerData.DefaultWeapons.Length];
-            for(int i = 0; i< playerData.DefaultWeapons.Length; i++)
+            for (int i = 0; i < playerData.DefaultWeapons.Length; i++)
             {
-                currentWeapons[i] = Instantiate(playerData.DefaultWeapons[i],transform);
+                currentWeapons[i] = Instantiate(playerData.DefaultWeapons[i], transform);
                 currentWeapons[i].Initialize(new IControllable[] { spatialGroupManager });
             }
-
         }
         else
         {
@@ -140,12 +138,9 @@ public class PlayerController : MonoBehaviour, IControllable
                 }
             }
 
-
             for (int i = 0; i < currentWeapons.Length; i++)
             {
                 currentWeapons[i].Attack(transform.position, movementVector);
-
-
             }
 
             yield return waitForEndOfFrame;

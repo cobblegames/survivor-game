@@ -39,7 +39,7 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
     private Dictionary<int, List<Enemy>> enemyBatches = new Dictionary<int, List<Enemy>>();
 
     public Dictionary<int, HashSet<Enemy>> enemySpatialGroups = new Dictionary<int, HashSet<Enemy>>();
-    public Dictionary<int, HashSet<IBullet>> bulletSpatialGroups = new Dictionary<int, HashSet<IBullet>>();
+    public Dictionary<int, HashSet<BaseBullet>> bulletSpatialGroups = new Dictionary<int, HashSet<BaseBullet>>();
     private SortedSet<BatchScore> batchQueue_Enemy = new SortedSet<BatchScore>();
 
     // Keeps track of the current score of each batch
@@ -69,6 +69,11 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
     private PoolManager poolManager;
     private WaitForEndOfFrame waitForEndOfFrame = new WaitForEndOfFrame();
 
+    private bool isInitialized;
+
+    public bool IsInitialized
+    { get { return isInitialized; } }
+
     private void OnEnable()
     {
         GameEvents.OnStartGame += InitializeBatches;
@@ -87,6 +92,21 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
 
     private void InitializeBatches()
     {
+        // Set map bounds
+        mapWidthMin = -spatialData.SpatialGroupWidth / 2;
+        mapWidthMax = spatialData.SpatialGroupWidth / 2;
+        mapHeightMin = -spatialData.SpatialGroupHeight / 2;
+        mapHeightMax = spatialData.SpatialGroupHeight / 2;
+
+        // STATIC GET SPATIAL GROUP ONCE CALCULATIONS
+
+        CELLS_PER_ROW_STATIC = (int)Mathf.Sqrt(spatialData.NumberOfPartitions);
+        CELLS_PER_COLUMN_STATIC = CELLS_PER_ROW_STATIC; // Square grid assumption
+        CELL_WIDTH_STATIC = spatialData.SpatialGroupWidth / CELLS_PER_ROW_STATIC;
+        CELL_HEIGHT_STATIC = spatialData.SpatialGroupHeight / CELLS_PER_COLUMN_STATIC;
+        HALF_WIDTH_STATIC = spatialData.SpatialGroupWidth / 2;
+        HALF_HEIGHT_STATIC = spatialData.SpatialGroupHeight / 2;
+
         for (int i = 0; i < spatialData.BatchCount; i++)
         {
             BatchScore batchScore = new BatchScore(i, 0);
@@ -101,27 +121,14 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
         for (int i = 0; i < spatialData.NumberOfPartitions; i++)
         {
             enemySpatialGroups.Add(i, new HashSet<Enemy>());
-            bulletSpatialGroups.Add(i, new HashSet<IBullet>());
+
+            if (!bulletSpatialGroups.ContainsKey(i))
+            {
+                bulletSpatialGroups.Add(i, new HashSet<BaseBullet>());
+            }
         }
 
-        //for (int i = 0; i < spatialData.InitEnemyCount; i++)
-        //{
-        //    SpawnEnemy();
-        //}
-
-        // Set map bounds
-        mapWidthMin = -spatialData.SpatialGroupWidth / 2;
-        mapWidthMax = spatialData.SpatialGroupWidth / 2;
-        mapHeightMin = -spatialData.SpatialGroupHeight / 2;
-        mapHeightMax = spatialData.SpatialGroupHeight / 2;
-
-        // STATIC GET SPATIAL GROUP ONCE CALCULATIONS
-        CELLS_PER_ROW_STATIC = (int)Mathf.Sqrt(spatialData.NumberOfPartitions);
-        CELLS_PER_COLUMN_STATIC = CELLS_PER_ROW_STATIC; // Square grid assumption
-        CELL_WIDTH_STATIC = spatialData.SpatialGroupWidth / CELLS_PER_ROW_STATIC;
-        CELL_HEIGHT_STATIC = spatialData.SpatialGroupHeight / CELLS_PER_COLUMN_STATIC;
-        HALF_WIDTH_STATIC = spatialData.SpatialGroupWidth / 2;
-        HALF_HEIGHT_STATIC = spatialData.SpatialGroupHeight / 2;
+        isInitialized = true;
 
         StartCoroutine(SpatialManagerMainCoroutiune());
     }
@@ -419,6 +426,11 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
         float cellWidth = mapWidth / cellsPerRow;
         float cellHeight = mapHeight / cellsPerColumn;
 
+        if (cellWidth <= 0 || cellHeight <= 0)
+        {
+            Debug.LogError("Invalid cell dimensions in spatial group calculation."); return 0;
+        }
+
         // Adjust positions to map's coordinate system
         float adjustedX = xPos + (mapWidth / 2);
         float adjustedY = yPos + (mapHeight / 2);
@@ -443,7 +455,6 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
 
     public int GetSpatialGroupStatic(float xPos, float yPos)
     {
-        // Adjust positions to map's coordinate system
         float adjustedX = xPos + HALF_WIDTH_STATIC;
         float adjustedY = yPos + HALF_HEIGHT_STATIC;
 

@@ -1,9 +1,7 @@
 using UnityEngine;
 
-
 public class BulletWhip : BaseBullet
 {
- 
     [SerializeField] private Vector2 squareHitbox;
     [SerializeField] private Transform hitBoxSize;
 
@@ -16,7 +14,7 @@ public class BulletWhip : BaseBullet
 
     protected override bool CheckHitBox(Enemy _enemy)
     {
-
+        Debug.Log("Enemy Is damaged");
         float halfWidth = squareHitbox.x / 2;
         float halfHeight = squareHitbox.y / 2;
 
@@ -29,6 +27,5 @@ public class BulletWhip : BaseBullet
         // Check if the position is within the bounds
         return _enemy.transform.position.x >= leftBound && _enemy.transform.position.x <= rightBound &&
         _enemy.transform.position.y >= bottomBound && _enemy.transform.position.y <= topBound;
-
     }
 }

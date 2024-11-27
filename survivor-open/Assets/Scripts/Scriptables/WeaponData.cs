@@ -9,17 +9,21 @@ public class WeaponData : ScriptableObject
     [SerializeField] private int maxTargets;
     [SerializeField] private int baseBulletCount;
     [SerializeField] private float range;
+
     public string WeaponName
     { get { return weaponName; } }
+
     public float Damage
     { get { return damage; } }
+
     public float AttackCooldown
     { get { return attackCooldown; } }
+
     public int MaxTargets
     { get { return maxTargets; } } // For AoE or chaining effects
 
     public int BaseBulletCount
-    { get { return baseBulletCount; } } 
+    { get { return baseBulletCount; } }
 
     public float Range
     { get { return range; } }

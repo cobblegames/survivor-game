@@ -20,7 +20,7 @@ public class SpatialGroupsData : ScriptableObject
     public int SpatialGroupHeight
     { get { return spatialGroupHeight; } private set { spatialGroupHeight = value; } }
 
-    public int NumberOfPartitions 
+    public int NumberOfPartitions
     { get { return numberOfPartitions; } private set { numberOfPartitions = value; } }
 
     public int InitEnemyCount

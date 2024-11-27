@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponName: Whip
   damage: 10
-  attackCooldown: 3
+  attackCooldown: 1
   maxTargets: 1
-  baseBulletCount: 1
+  baseBulletCount: 2
   range: 10

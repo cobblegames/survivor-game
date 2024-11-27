@@ -1,4 +1,3 @@
-
 public interface IBullet
 {
     public void EveryFrameLogic();

@@ -5,6 +5,7 @@ public class Weapon : MonoBehaviour, IControllable
     [SerializeField] protected WeaponData weaponData;
 
     [SerializeField] protected BaseBullet bulletPrefab;
+
     // Core weapon properties
     protected string weaponName;
 
@@ -14,10 +15,8 @@ public class Weapon : MonoBehaviour, IControllable
     protected float currentRange;
     protected float currentCooldownTimer;
 
-
     public float CurrentDamage
     { get { return currentDamage; } private set { currentDamage = value; } }
-
 
     public int CurrentMaxTargets
     { get { return currentMaxTargets; } private set { currentMaxTargets = value; } }
@@ -40,12 +39,11 @@ public class Weapon : MonoBehaviour, IControllable
 
     public virtual void Attack(Vector3 origin, Vector3 direction)
     {
-        if(CanAttack())
+        if (CanAttack())
         {
             PerformAttack(origin, direction);
             currentCooldownTimer = currentAttackCoolDown;
         }
-       
     }
 
     protected virtual bool CanAttack() // all weapons will be processed in one loop
@@ -63,5 +61,6 @@ public class Weapon : MonoBehaviour, IControllable
 
     // method for specific attack logic
     protected virtual void PerformAttack(Vector3 origin, Vector3 direction)
-    { }
+    {
+    }
 }
