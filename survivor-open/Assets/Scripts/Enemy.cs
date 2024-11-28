@@ -113,17 +113,17 @@ public class Enemy : MonoBehaviour, IMovable, IControllable
     public void ChangeHealth(float amount)
     {
         currentHealth -= amount;
-        Debug.Log("Enemy Is damaged");
+        Debug.Log(gameObject.name + " Enemy Is damaged");
 
         if (currentHealth <= 0)
-        {
+        {       
             KillEnemy();
         }
     }
 
     public void KillEnemy()
     {
-        Debug.Log("Enemy Killed");
+        Debug.Log(gameObject.name + " Enemy Killed");
 
         spatialGroupManager.RemoveFromSpatialGroup(batchId, this);
         spatialGroupManager.enemySpatialGroups[spatialGroup].Remove(this);

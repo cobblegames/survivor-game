@@ -34,7 +34,7 @@ public class WeaponWhip : Weapon
         }
     }
 
-    private void SpawnBulletZigZag(Vector3 origin, float zigOffset = 2f)
+    private void SpawnBulletZigZag(Vector3 origin)
     {
         // Normalize the direction to ensure consistent distance
         //  direction = direction.normalized;

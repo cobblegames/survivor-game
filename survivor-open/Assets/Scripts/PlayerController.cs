@@ -160,7 +160,7 @@ public class PlayerController : MonoBehaviour, IControllable
             if (distance < currentHitBoxRadius)
             {
                 // Take damage
-                ModifyHealth(enemy.Damage);
+            //    ModifyHealth(enemy.Damage);
 
                 break;
             }

@@ -12,20 +12,27 @@ public class BulletWhip : BaseBullet
         hitBoxSize.localScale = squareHitbox;
     }
 
+
+
     protected override bool CheckHitBox(Enemy _enemy)
     {
-        Debug.Log("Enemy Is damaged");
-        float halfWidth = squareHitbox.x / 2;
-        float halfHeight = squareHitbox.y / 2;
+        Vector2 adjustedSquareHitbox = new Vector2(squareHitbox.x * transform.lossyScale.x, squareHitbox.y * transform.lossyScale.y);
+      
+        float halfWidth = adjustedSquareHitbox.x / 2f;
+        float halfHeight = adjustedSquareHitbox.y / 2f;
 
         // Calculate bounds of the rectangle
-        float leftBound = squareHitbox.x - halfWidth;
-        float rightBound = squareHitbox.x + halfWidth;
-        float bottomBound = squareHitbox.y - halfHeight;
-        float topBound = squareHitbox.y + halfHeight;
+        float leftBound = transform.position.x - halfWidth;
+        float rightBound = transform.position.x + halfWidth;
+        float bottomBound = transform.position.y - halfHeight;
+        float topBound = transform.position.y + halfHeight;
 
-        // Check if the position is within the bounds
-        return _enemy.transform.position.x >= leftBound && _enemy.transform.position.x <= rightBound &&
+
+        bool result = _enemy.transform.position.x >= leftBound && _enemy.transform.position.x <= rightBound &&
         _enemy.transform.position.y >= bottomBound && _enemy.transform.position.y <= topBound;
+
+        Debug.Log("Enemy is within bounds " + result);
+        // Check if the position is within the bounds
+        return result;
     }
 }

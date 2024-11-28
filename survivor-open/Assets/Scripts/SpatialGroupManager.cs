@@ -175,7 +175,7 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
         foreach (Enemy enemy in enemyBatches[batchID])
         {
             if (enemy) enemy.EveryFrameLogic();
-            else Debug.LogError("Enemy is null");
+            else Debug.Log("Enemy is null");
         }
     }
 

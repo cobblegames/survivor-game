@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Diagnostics;
 
 public class BaseBullet : MonoBehaviour, IControllable, IBullet
 {
@@ -51,8 +52,11 @@ public class BaseBullet : MonoBehaviour, IControllable, IBullet
 
     public virtual void CheckCollisionWithEnemy()
     {
+        Debug.Log("Checking collision with enemy");
+        surroundingSpatialGroups = spatialGroupManager.GetExpandedSpatialGroups(spatialGroup, transform.forward);
         List<Enemy> surroundingEnemies = spatialGroupManager.GetAllEnemiesInSpatialGroups(surroundingSpatialGroups);
         int targetCounter = 0;
+        Debug.Log("Enemies found: " + surroundingEnemies.Count);
         foreach (Enemy enemy in surroundingEnemies)
         {
             if (enemy == null)
@@ -64,13 +68,17 @@ public class BaseBullet : MonoBehaviour, IControllable, IBullet
             Debug.Log("enemy found");
             if (CheckHitBox(enemy))
             {
-                targetCounter++;
+                Debug.Log("collision is registered");
+              //  targetCounter++;
                 DoAttack(enemy);
-                if (targetCounter >= inheritedMaxTargets)
-                {
-                    DestroyBullet();
-                    break;
-                }
+                //if (targetCounter >= inheritedMaxTargets)
+                //{
+                //    DestroyBullet();
+                //    break;
+                //}
+            }else
+            {
+                Debug.Log("No collision");
             }
         }
 
@@ -79,7 +87,7 @@ public class BaseBullet : MonoBehaviour, IControllable, IBullet
 
     protected virtual bool CheckHitBox(Enemy _enemy)
     {
-        return true;
+        return false;
     }
 
     protected virtual void DoAttack(Enemy _enemy)
@@ -90,7 +98,7 @@ public class BaseBullet : MonoBehaviour, IControllable, IBullet
     public virtual void DestroyBullet()
     {
         if (isDestroyed) return;
-
+        Debug.Log("Bullet is destroyed");
         spatialGroupManager.bulletSpatialGroups[spatialGroup].Remove(this);
         isDestroyed = true;
         Destroy(gameObject, destroyTime);
