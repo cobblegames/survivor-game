@@ -1,13 +1,23 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum PoolObjectType {Enemy = 0, Pickable = 1}
+
 public class PoolManager : MonoBehaviour, IControllable
 {
     [System.Serializable]
     public class Pool
     {
-        public string poolName; // Identifier for the pool
-        public GameObject prefab; // Enemy prefab
+
+        
+        [SerializeField]    private string poolName; // Identifier for the pool
+        [SerializeField]    private GameObject prefab; // Enemy prefab
+        [SerializeField]    private PoolObjectType poolObject;
+
+        public string PoolName { get { return poolName; } }
+        public GameObject Prefab { get { return prefab; } }
+        public PoolObjectType PoolObject { get { return poolObject; } }
+
     }
 
     [SerializeField] private List<Pool> pools;
@@ -17,9 +27,10 @@ public class PoolManager : MonoBehaviour, IControllable
     private Dictionary<GameObject, string> activeObjects; // Tracks which pool an object belongs to
 
     [SerializeField] private Transform enemyHolder;
+    [SerializeField] private Transform pickupsHolder;
 
-    public Transform EnemyHolder
-    { get { return enemyHolder; } }
+    public Transform EnemyHolder { get { return enemyHolder; } }
+    public Transform PickupsHolder { get { return pickupsHolder; } }
 
     private SpatialGroupManager spatialGroupManager;
 
@@ -40,11 +51,11 @@ public class PoolManager : MonoBehaviour, IControllable
 
             // Instantiate initial objects for the pool
 
-            GameObject obj = Instantiate(pool.prefab, poolObjectHolder);
+            GameObject obj = Instantiate(pool.Prefab, poolObjectHolder);
             obj.SetActive(false); // Deactivate the object initially
             objectPool.Enqueue(obj);
 
-            poolDictionary.Add(pool.poolName, objectPool);
+            poolDictionary.Add(pool.PoolName, objectPool);
         }
     }
 
@@ -58,12 +69,6 @@ public class PoolManager : MonoBehaviour, IControllable
 
         GameObject objectToSpawn = poolDictionary[poolName].Dequeue();
 
-        //// Reactivate and position the object
-        //objectToSpawn.SetActive(true);
-        //objectToSpawn.transform.position = position;
-        //objectToSpawn.transform.rotation = rotation;
-
-        // Track this object as active and associate it with its pool
         activeObjects[objectToSpawn] = poolName;
 
         // Requeue the object back into the pool for future use

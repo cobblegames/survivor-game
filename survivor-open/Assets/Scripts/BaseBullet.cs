@@ -55,7 +55,7 @@ public class BaseBullet : MonoBehaviour, IControllable, IBullet
         Debug.Log("Checking collision with enemy");
         surroundingSpatialGroups = spatialGroupManager.GetExpandedSpatialGroups(spatialGroup, transform.forward);
         List<Enemy> surroundingEnemies = spatialGroupManager.GetAllEnemiesInSpatialGroups(surroundingSpatialGroups);
-        int targetCounter = 0;
+
         Debug.Log("Enemies found: " + surroundingEnemies.Count);
         foreach (Enemy enemy in surroundingEnemies)
         {
@@ -69,14 +69,9 @@ public class BaseBullet : MonoBehaviour, IControllable, IBullet
             if (CheckHitBox(enemy))
             {
                 Debug.Log("collision is registered");
-              //  targetCounter++;
                 DoAttack(enemy);
-                //if (targetCounter >= inheritedMaxTargets)
-                //{
-                //    DestroyBullet();
-                //    break;
-                //}
-            }else
+            }
+            else
             {
                 Debug.Log("No collision");
             }

@@ -40,6 +40,7 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
 
     public Dictionary<int, HashSet<Enemy>> enemySpatialGroups = new Dictionary<int, HashSet<Enemy>>();
     public Dictionary<int, HashSet<BaseBullet>> bulletSpatialGroups = new Dictionary<int, HashSet<BaseBullet>>();
+    public Dictionary<int, HashSet<Pickable>> pickableSpatialGroups = new Dictionary<int, HashSet<Pickable>>();
     private SortedSet<BatchScore> batchQueue_Enemy = new SortedSet<BatchScore>();
 
     // Keeps track of the current score of each batch
@@ -125,6 +126,11 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
             if (!bulletSpatialGroups.ContainsKey(i))
             {
                 bulletSpatialGroups.Add(i, new HashSet<BaseBullet>());
+            }
+
+            if (!pickableSpatialGroups.ContainsKey(i))
+            {
+                pickableSpatialGroups.Add(i, new HashSet<Pickable>());
             }
         }
 
