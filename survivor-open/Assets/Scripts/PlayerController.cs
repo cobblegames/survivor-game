@@ -172,6 +172,7 @@ public class PlayerController : MonoBehaviour, IControllable
     {
         List<int> surroundingSpatialGroups = spatialGroupManager.GetExpandedSpatialGroups(spatialGroup, Vector2.zero);
         List<Pickable> surroundingPickables = spatialGroupManager.GetAllItemsInSpatialGroups<Pickable>(surroundingSpatialGroups, spatialGroupManager.pickableSpatialGroups);
+        Debug.Log("Found pickables in area: " + surroundingPickables.Count);
 
         foreach (Pickable pickable in surroundingPickables)
         {
@@ -241,9 +242,11 @@ public class PlayerController : MonoBehaviour, IControllable
 
     private void HandlePickup (Pickable pickable)
     {
+        Debug.Log("Collsion with pickable detected");
+
         spatialGroupManager.pickableSpatialGroups[spatialGroup].Remove(pickable);
 
-        Destroy(pickable);
+        Destroy(pickable.gameObject);
     }
 
 

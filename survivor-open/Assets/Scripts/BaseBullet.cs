@@ -63,10 +63,10 @@ public class BaseBullet : MonoBehaviour, IControllable, IBullet
                 continue;
             }
 
-            Debug.Log("enemy found");
+          
             if (CheckHitBox(enemy))
             {
-                Debug.Log("collision is registered");
+              
                 DoAttack(enemy);
             }
             else
@@ -91,7 +91,6 @@ public class BaseBullet : MonoBehaviour, IControllable, IBullet
     public virtual void DestroyBullet()
     {
         if (isDestroyed) return;
-        Debug.Log("Bullet is destroyed");
         spatialGroupManager.bulletSpatialGroups[spatialGroup].Remove(this);
         isDestroyed = true;
         Destroy(gameObject, destroyTime);
