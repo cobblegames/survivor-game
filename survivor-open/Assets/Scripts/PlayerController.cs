@@ -136,6 +136,8 @@ public class PlayerController : MonoBehaviour, IControllable
                     CheckCollisionWithEnemy();
                     takeDamageEveryXFrames = 0;
                 }
+
+                CheckCollisionWithPickable();
             }
 
             for (int i = 0; i < currentWeapons.Length; i++)
@@ -150,7 +152,7 @@ public class PlayerController : MonoBehaviour, IControllable
     private void CheckCollisionWithEnemy()
     {
         List<int> surroundingSpatialGroups = spatialGroupManager.GetExpandedSpatialGroups(spatialGroup, Vector2.zero);
-        List<Enemy> surroundingEnemies = spatialGroupManager.GetAllEnemiesInSpatialGroups(surroundingSpatialGroups);
+        List<Enemy> surroundingEnemies = spatialGroupManager.GetAllItemsInSpatialGroups<Enemy>(surroundingSpatialGroups, spatialGroupManager.enemySpatialGroups);
 
         foreach (Enemy enemy in surroundingEnemies)
         {
@@ -160,7 +162,27 @@ public class PlayerController : MonoBehaviour, IControllable
             if (distance < currentHitBoxRadius)
             {
                 // Take damage
-            //    ModifyHealth(enemy.Damage);
+                ModifyHealth(enemy.Damage);
+                break;
+            }
+        }
+    }
+
+    private void CheckCollisionWithPickable()
+    {
+        List<int> surroundingSpatialGroups = spatialGroupManager.GetExpandedSpatialGroups(spatialGroup, Vector2.zero);
+        List<Pickable> surroundingPickables = spatialGroupManager.GetAllItemsInSpatialGroups<Pickable>(surroundingSpatialGroups, spatialGroupManager.pickableSpatialGroups);
+
+        foreach (Pickable pickable in surroundingPickables)
+        {
+            if (pickable == null) continue;
+
+            float distance = Vector2.Distance(transform.position, pickable.transform.position);
+            if (distance < currentHitBoxRadius)
+            {
+                // Pickup
+                HandlePickup(pickable);
+           
 
                 break;
             }
@@ -183,7 +205,8 @@ public class PlayerController : MonoBehaviour, IControllable
         }
 
         // Get all enemies
-        List<Enemy> nearbyEnemies = spatialGroupManager.GetAllEnemiesInSpatialGroups(spatialGroupsToSearch);
+        List<Enemy> nearbyEnemies = spatialGroupManager.GetAllItemsInSpatialGroups<Enemy>(spatialGroupsToSearch, spatialGroupManager.enemySpatialGroups);
+
 
         // No nearby enemies?
         if (nearbyEnemies.Count == 0)
@@ -215,7 +238,16 @@ public class PlayerController : MonoBehaviour, IControllable
         }
     }
 
-    public void ModifyHealth(float amount)
+
+    private void HandlePickup (Pickable pickable)
+    {
+        spatialGroupManager.pickableSpatialGroups[spatialGroup].Remove(pickable);
+
+        Destroy(pickable);
+    }
+
+
+    private void ModifyHealth(float amount)
     {
         currentHealth -= amount;
         healthBar.UpdateBar(currentHealth / playerData.Health);

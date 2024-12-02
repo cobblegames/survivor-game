@@ -127,6 +127,7 @@ public class Enemy : MonoBehaviour, IMovable, IControllable
         Pickable pickup = pickupOBJ.GetComponent<Pickable>();
         pickup.transform.position = transform.position;
         pickupOBJ.SetActive(true);
+        spatialGroupManager.pickableSpatialGroups[spatialGroup].Add(pickup);
 
         spatialGroupManager.RemoveFromSpatialGroup(batchId, this);
         spatialGroupManager.enemySpatialGroups[spatialGroup].Remove(this);

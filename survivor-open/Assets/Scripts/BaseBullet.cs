@@ -30,8 +30,7 @@ public class BaseBullet : MonoBehaviour, IControllable, IBullet
         inheritedDamage = parentWeapon.CurrentDamage;
         inheritedMaxTargets = parentWeapon.CurrentMaxTargets;
         inheritedRange = parentWeapon.CurrentRange;
-        //   Debug.Log("spatialGroup "  + spatialGroup);
-
+ 
         StartCoroutine(MainBulletLoop());
     }
 
@@ -51,12 +50,11 @@ public class BaseBullet : MonoBehaviour, IControllable, IBullet
     }
 
     public virtual void CheckCollisionWithEnemy()
-    {
-        Debug.Log("Checking collision with enemy");
+    {      
         surroundingSpatialGroups = spatialGroupManager.GetExpandedSpatialGroups(spatialGroup, transform.forward);
-        List<Enemy> surroundingEnemies = spatialGroupManager.GetAllEnemiesInSpatialGroups(surroundingSpatialGroups);
+        List<Enemy> surroundingEnemies = spatialGroupManager.GetAllItemsInSpatialGroups<Enemy>(surroundingSpatialGroups, spatialGroupManager.enemySpatialGroups);
 
-        Debug.Log("Enemies found: " + surroundingEnemies.Count);
+ 
         foreach (Enemy enemy in surroundingEnemies)
         {
             if (enemy == null)

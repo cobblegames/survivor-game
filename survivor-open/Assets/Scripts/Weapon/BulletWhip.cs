@@ -8,7 +8,6 @@ public class BulletWhip : BaseBullet
     public override void Initialize(IControllable[] _injectedElements)
     {
         base.Initialize(_injectedElements);
-        Debug.Log("spawning Bullet Whip");
         hitBoxSize.localScale = squareHitbox;
     }
 
@@ -31,7 +30,7 @@ public class BulletWhip : BaseBullet
         bool result = _enemy.transform.position.x >= leftBound && _enemy.transform.position.x <= rightBound &&
         _enemy.transform.position.y >= bottomBound && _enemy.transform.position.y <= topBound;
 
-        Debug.Log("Enemy is within bounds " + result);
+      
         // Check if the position is within the bounds
         return result;
     }

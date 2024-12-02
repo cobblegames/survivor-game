@@ -11,7 +11,7 @@ public class ExperienceGem : Pickable
 
     public override void Initialize(IControllable[] _injectedElements)
     {
-        
+        base.Initialize(_injectedElements);
     }
 
 
