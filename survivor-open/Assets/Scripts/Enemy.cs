@@ -32,13 +32,14 @@ public class Enemy : MonoBehaviour, IMovable, IControllable
         get { return enemyData.Damage; }
     }
 
-    private SpatialGroupManager spatialGroupManager;
-    private PlayerController playerController;
-
-    public void Initialize(IControllable[] _argTable)
+    protected SpatialGroupManager spatialGroupManager;
+    protected PlayerController playerController;
+    protected PoolManager poolManager;
+    public void Initialize(IControllable[] _injectedElements)
     {
-        this.spatialGroupManager = _argTable[0] as SpatialGroupManager;
-        this.playerController = _argTable[1] as PlayerController;
+        this.spatialGroupManager = _injectedElements[0] as SpatialGroupManager;
+        this.playerController = _injectedElements[1] as PlayerController;
+        this.poolManager = _injectedElements[2] as PoolManager;
 
         if (enemyData != null)
         {
@@ -113,8 +114,6 @@ public class Enemy : MonoBehaviour, IMovable, IControllable
     public void ChangeHealth(float amount)
     {
         currentHealth -= amount;
-        Debug.Log(gameObject.name + " Enemy Is damaged");
-
         if (currentHealth <= 0)
         {       
             KillEnemy();
@@ -123,7 +122,11 @@ public class Enemy : MonoBehaviour, IMovable, IControllable
 
     public void KillEnemy()
     {
-        Debug.Log(gameObject.name + " Enemy Killed");
+      
+        GameObject pickupOBJ = Instantiate(poolManager.SpawnFromPool("exp1"), poolManager.PickupsHolder);
+        Pickable pickup = pickupOBJ.GetComponent<Pickable>();
+        pickup.transform.position = transform.position;
+        pickupOBJ.SetActive(true);
 
         spatialGroupManager.RemoveFromSpatialGroup(batchId, this);
         spatialGroupManager.enemySpatialGroups[spatialGroup].Remove(this);

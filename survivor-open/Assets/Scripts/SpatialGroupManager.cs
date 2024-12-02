@@ -383,7 +383,7 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
         enemyScript.BatchID = batchToBeAdded;
         enemyBatches[batchToBeAdded].Add(enemyScript);
 
-        enemyScript.Initialize(new IControllable[] { this, playerController });
+        enemyScript.Initialize(new IControllable[] { this, playerController, poolManager });
     }
 
     private Vector2 GetPartitionCenterDynamic(int partition, float mapWidth, float mapHeight, int totalPartitions)
