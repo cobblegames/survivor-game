@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class Enemy : MonoBehaviour, IMovable, IControllable
 {
@@ -35,6 +36,7 @@ public class Enemy : MonoBehaviour, IMovable, IControllable
     protected SpatialGroupManager spatialGroupManager;
     protected PlayerController playerController;
     protected PoolManager poolManager;
+
     public void Initialize(IControllable[] _injectedElements)
     {
         this.spatialGroupManager = _injectedElements[0] as SpatialGroupManager;
@@ -115,22 +117,22 @@ public class Enemy : MonoBehaviour, IMovable, IControllable
     {
         currentHealth -= amount;
         if (currentHealth <= 0)
-        {       
+        {
             KillEnemy();
         }
     }
 
     public void KillEnemy()
     {
-      
         GameObject pickupOBJ = Instantiate(poolManager.SpawnFromPool("exp1"), poolManager.PickupsHolder);
         Pickable pickup = pickupOBJ.GetComponent<Pickable>();
         pickup.transform.position = transform.position;
         pickupOBJ.SetActive(true);
-        spatialGroupManager.pickableSpatialGroups[spatialGroup].Add(pickup);
+        pickup.Initialize(new IControllable[] { spatialGroupManager, playerController });
+        int batchID = spatialGroupManager.GetBatchIDFromSpatialGroup(spatialGroup);
 
-        spatialGroupManager.RemoveFromSpatialGroup(batchId, this);
-        spatialGroupManager.enemySpatialGroups[spatialGroup].Remove(this);
+        spatialGroupManager.pickableSpatialGroups[batchID].Add(pickup);
+        spatialGroupManager.enemySpatialGroups[batchID].Remove(this);
 
         Destroy(gameObject);
     }

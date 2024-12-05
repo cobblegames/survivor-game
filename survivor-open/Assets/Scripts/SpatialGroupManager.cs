@@ -37,7 +37,8 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
 
     // Enemy logic
     private Dictionary<int, List<Enemy>> enemyBatches = new Dictionary<int, List<Enemy>>();
-    private Dictionary<int, List<Pickable>> pickableBatches = new Dictionary<int, List<Pickable>>();
+    public Dictionary<int, List<Pickable>> pickableBatches = new Dictionary<int, List<Pickable>>();
+     
 
     public Dictionary<int, HashSet<Enemy>> enemySpatialGroups = new Dictionary<int, HashSet<Enemy>>();
     public Dictionary<int, HashSet<BaseBullet>> bulletSpatialGroups = new Dictionary<int, HashSet<BaseBullet>>();
@@ -178,11 +179,6 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
         {
             if (enemy) enemy.IntervalLogic();
         }
-
-        foreach (Pickable pickable in pickableBatches[batchID])
-        {
-            if (pickable) pickable.IntervalLogic();
-        }
     }
 
     private void RunEveryFrameLogic(int batchID)
@@ -190,9 +186,33 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
         // Run logic for all enemies in batch
         foreach (Enemy enemy in enemyBatches[batchID])
         {
+        
             if (enemy) enemy.EveryFrameLogic();
             else Debug.Log("Enemy is null");
         }
+
+       
+        if(pickableSpatialGroups != null)
+        {
+            foreach (Pickable pickable in pickableSpatialGroups[batchID])
+            {
+                if (pickable && pickable.isActiveAndEnabled)
+                {
+                    Debug.Log("Executing Pickable Every Frame Logic");
+                    pickable.EveryFrameLogic();
+                }
+                else
+                {
+                    Debug.Log("Pickable is null or inactive.");
+                }
+            }
+        }else
+        {
+            Debug.Log("pickableSpatialGroups count is NULL");
+        }
+
+       
+
     }
 
 
@@ -212,11 +232,30 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
         return items;
     }
 
+    public int GetBatchIDFromSpatialGroup(int spatialGroup)
+    {
+        // Ensure spatialGroup is valid
+        if (spatialGroup < 0)
+        {
+            Debug.LogError($"Invalid spatialGroup: {spatialGroup}");
+            return -1; // Return an invalid batchID
+        }
+
+        // Map spatialGroup to a batchID using modulo
+        int batchID = spatialGroup % spatialData.BatchCount;
+
+        // Log the mapping for debugging
+        Debug.Log($"SpatialGroup {spatialGroup} mapped to BatchID {batchID}");
+
+        return batchID;
+    }
 
 
     public List<int> GetExpandedSpatialGroups(int spatialGroup, Vector2 direction)
     {
-        List<int> expandedSpatialGroups = new List<int>() { spatialGroup };
+        List<int> expandedSpatialGroups = new List<int>() { GetBatchIDFromSpatialGroup(spatialGroup) };
+
+      
 
         bool goingRight = direction.x > 0;
         bool goingTop = direction.y > 0;
@@ -389,7 +428,8 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
         // Spatial group
         int spatialGroup = GetSpatialGroup(enemyGO.transform.position.x, enemyGO.transform.position.y);
         enemyScript.SpatialGroup = spatialGroup;
-        AddToEnemySpatialGroup(spatialGroup, enemyScript);
+        enemySpatialGroups[spatialGroup].Add(enemyScript);
+     
 
         // Batch for update logic
         enemyScript.BatchID = batchToBeAdded;
@@ -421,7 +461,7 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
 
     private void AddToEnemySpatialGroup(int spatialGroupID, Enemy enemy)
     {
-        enemySpatialGroups[spatialGroupID].Add(enemy);
+     
     }
 
     public void RemoveFromSpatialGroup(int spatialGroupID, Enemy enemy)

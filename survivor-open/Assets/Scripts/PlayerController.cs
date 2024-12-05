@@ -170,8 +170,9 @@ public class PlayerController : MonoBehaviour, IControllable
 
     private void CheckCollisionWithPickable()
     {
-        List<int> surroundingSpatialGroups = spatialGroupManager.GetExpandedSpatialGroups(spatialGroup, Vector2.zero);
-        List<Pickable> surroundingPickables = spatialGroupManager.GetAllItemsInSpatialGroups<Pickable>(surroundingSpatialGroups, spatialGroupManager.pickableSpatialGroups);
+        List<int> surroundingSpatialGroupsBatchIDs = spatialGroupManager.GetExpandedSpatialGroups(spatialGroup, Vector2.zero);
+      
+        List<Pickable> surroundingPickables = spatialGroupManager.GetAllItemsInSpatialGroups<Pickable>(surroundingSpatialGroupsBatchIDs, spatialGroupManager.pickableSpatialGroups);
         Debug.Log("Found pickables in area: " + surroundingPickables.Count);
 
         foreach (Pickable pickable in surroundingPickables)
@@ -179,7 +180,7 @@ public class PlayerController : MonoBehaviour, IControllable
             if (pickable == null) continue;
 
             float distance = Vector2.Distance(transform.position, pickable.transform.position);
-            if (distance < currentHitBoxRadius)
+            if (distance <= currentHitBoxRadius)
             {
                 // Pickup
                 HandlePickup(pickable);
@@ -243,8 +244,8 @@ public class PlayerController : MonoBehaviour, IControllable
     private void HandlePickup (Pickable pickable)
     {
         Debug.Log("Collsion with pickable detected");
-
-        spatialGroupManager.pickableSpatialGroups[spatialGroup].Remove(pickable);
+        int batchID = spatialGroupManager.GetBatchIDFromSpatialGroup(spatialGroup);
+        spatialGroupManager.pickableSpatialGroups[batchID].Remove(pickable);
 
         Destroy(pickable.gameObject);
     }

@@ -6,6 +6,8 @@ public class Pickable : MonoBehaviour, IControllable, IMovable
     protected SpatialGroupManager spatialGroupManager;
     protected PlayerController playerController;
 
+    [SerializeField] protected bool magnetIsOn = false;
+    [SerializeField] protected float currentSpeed = 0.2f;
     public virtual void Initialize(IControllable[] _injectedElements)
     {
         spatialGroupManager = _injectedElements[0] as SpatialGroupManager;
@@ -19,7 +21,13 @@ public class Pickable : MonoBehaviour, IControllable, IMovable
 
     public void EveryFrameLogic()
     {
-        
+        if (magnetIsOn)
+        {
+            Vector3 currentMovementDirection = playerController.transform.position - transform.position;
+            currentMovementDirection.Normalize();
+            Debug.Log("Moving pickable");
+            transform.position += currentMovementDirection * Time.deltaTime * currentSpeed;
+        }
     }
 
 }
