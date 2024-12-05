@@ -1,16 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour, IControllable
 {
     [Header("UI Elements")]
-    [SerializeField] private HealthBar healthBar;
+    [SerializeField] private ProgressBar healthBar;
+    [SerializeField] private ProgressBar expBar;
+    [SerializeField] private TextMeshProUGUI levelLabel;
 
     [Header("Drag to Inspector Elements")]
     [SerializeField] private InputActionReference move;
-
     [SerializeField] private PlayerData playerData;
 
     #region private variables
@@ -18,7 +20,11 @@ public class PlayerController : MonoBehaviour, IControllable
     private float currentHealth = 100;
     private float currentMovementSpeed = 4f;
     private float currentHitBoxRadius = 0.4f;
+    private float currentCollectionRadius = 1f;
+    private int currentLevel = 0;
+    private int currentExperience = 0;
 
+    private bool doubleXPGrowth;
     private SpatialGroupManager spatialGroupManager;
     private int spatialGroup = -1;
     private int takeDamageEveryXFrames = 0;
@@ -180,7 +186,7 @@ public class PlayerController : MonoBehaviour, IControllable
             if (pickable == null) continue;
 
             float distance = Vector2.Distance(transform.position, pickable.transform.position);
-            if (distance <= currentHitBoxRadius)
+            if (distance <= currentCollectionRadius)
             {
                 // Pickup
                 HandlePickup(pickable);
@@ -244,10 +250,74 @@ public class PlayerController : MonoBehaviour, IControllable
     private void HandlePickup (Pickable pickable)
     {
         Debug.Log("Collsion with pickable detected");
+
+        pickable.Handle_GivePickupBonus();
+
         int batchID = spatialGroupManager.GetBatchIDFromSpatialGroup(spatialGroup);
         spatialGroupManager.pickableSpatialGroups[batchID].Remove(pickable);
 
         Destroy(pickable.gameObject);
+    }
+
+    // based on https://vampire-survivors.fandom.com/wiki/Level_up
+
+    public void GetExp(int _point)
+    {
+        if (doubleXPGrowth)
+            _point *= 2;
+
+        currentExperience += _point;
+        CheckForLevelUp();
+    }
+
+
+    private void CheckForLevelUp()
+    {
+
+        int xpRequired = GetXPRequiredForNextLevel(currentLevel);
+        float expProgression = (float)currentExperience / (float) xpRequired;
+
+        Debug.Log("current progression " + expProgression);
+        expBar.UpdateBar(expProgression);
+
+        if (currentExperience >= xpRequired)
+        {
+            currentExperience -= xpRequired;
+            currentLevel++;
+            levelLabel.text = currentLevel.ToString();
+            // Activate double XP growth if reaching level 20 or 40
+            if (currentLevel == 20 || currentLevel == 40)
+                doubleXPGrowth = true;
+            else
+                doubleXPGrowth = false;
+
+            Debug.Log($"Level up! New Level: {currentLevel}, Remaining XP: {currentExperience}");
+        }
+    }
+
+   
+    private int GetXPRequiredForNextLevel(int level)
+    {
+        if (level < 20)
+        {
+            return 5 + (level - 1) * 10;
+        }
+        else if (level == 20)
+        {
+            return 5 + (level - 1) * 10 + 600; // Extra XP requirement for level 20
+        }
+        else if (level < 40)
+        {
+            return 600 + (15 + (level - 21) * 13); // Base XP from level 20 + 13 XP per level
+        }
+        else if (level == 40)
+        {
+            return 600 + (15 + (level - 21) * 13) + 2400; // Extra XP requirement for level 40
+        }
+        else
+        {
+            return 2400 + (16 + (level - 41) * 16); // Base XP from level 40 + 16 XP per level
+        }
     }
 
 

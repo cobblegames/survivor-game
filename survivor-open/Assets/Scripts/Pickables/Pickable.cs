@@ -30,4 +30,9 @@ public class Pickable : MonoBehaviour, IControllable, IMovable
         }
     }
 
+    public virtual void Handle_GivePickupBonus()
+    {
+       
+    }
+
 }

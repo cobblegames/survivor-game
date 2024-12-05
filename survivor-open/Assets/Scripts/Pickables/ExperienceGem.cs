@@ -2,17 +2,17 @@ using UnityEngine;
 
 public class ExperienceGem : Pickable
 {
-    private float currentPoints;
-    private float currentCollection;
-
-    public float CurrentPoints
-    { get { return currentPoints; } }
-
+   [SerializeField] private int currentPoints;
 
     public override void Initialize(IControllable[] _injectedElements)
     {
         base.Initialize(_injectedElements);
     }
 
+
+    public override void Handle_GivePickupBonus()
+    {
+        playerController.GetExp(currentPoints);
+    }
 
 }

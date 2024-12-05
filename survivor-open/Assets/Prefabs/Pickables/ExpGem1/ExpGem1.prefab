@@ -135,3 +135,4 @@ MonoBehaviour:
   _data: {fileID: 11400000, guid: 863e7db552bf85c4f8dcd62fd03c4fa7, type: 2}
   magnetIsOn: 1
   currentSpeed: 1
+  currentPoints: 1
