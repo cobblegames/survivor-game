@@ -49,6 +49,12 @@ public class PlayerCharacterController : MonoBehaviour, IControllable
     //public int SpatialGroup
     //{ get { return spatialGroup; } }
 
+    public PlayerCharacterData PlayerData  
+    {
+        get { return playerData; }        
+    }
+
+
     public bool NoNearbyEnemies  // for weapons that need enemy targetting
     {
         get { return noNearbyEnemies; }

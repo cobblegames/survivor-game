@@ -8,6 +8,7 @@ public class UserInterfaceManager : MonoBehaviour, IControllable
     [SerializeField] private Button startButtonCharacterChoice;
     [SerializeField] private Button startButtonGameplay;
     [SerializeField] private RectTransform mainMenuRoot;
+    [SerializeField] private RectTransform windowsRoot;
     [SerializeField] private CharacterChoiceMain characterChoiceMain;
     
     
@@ -67,7 +68,7 @@ public class UserInterfaceManager : MonoBehaviour, IControllable
     private void Handle_StartGameShowCharacterChoice()
     {
         startButtonCharacterChoice.gameObject.SetActive(false);
-        CharacterChoiceMain characterChoice = GameObject.Instantiate(characterChoiceMain, mainMenuRoot) as CharacterChoiceMain;
+        CharacterChoiceMain characterChoice = GameObject.Instantiate(characterChoiceMain, windowsRoot) as CharacterChoiceMain;
         characterChoice.Initialize(new IControllable[] { playerProfile, this });
         startButtonGameplay.gameObject.SetActive(true);
     }

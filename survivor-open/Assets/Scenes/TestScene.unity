@@ -672,6 +672,7 @@ MonoBehaviour:
   startButtonCharacterChoice: {fileID: 580062237}
   startButtonGameplay: {fileID: 1813040045}
   mainMenuRoot: {fileID: 1807433389}
+  windowsRoot: {fileID: 1231055189}
   characterChoiceMain: {fileID: 1904320899330241567, guid: 6c32d7ee998c821418635fa16cbc27e6, type: 3}
   gameplayRoot: {fileID: 1361459972}
   healthBar: {fileID: 1940060292}
@@ -930,6 +931,8 @@ MonoBehaviour:
   - characterController: {fileID: 5227644822463801514, guid: 43ad2fe783e41de49a96279b523683f0, type: 3}
     isUnlocked: 1
   - characterController: {fileID: 5227644822463801514, guid: 6dd6ecfac1a004e4b9791e6154d9cbc9, type: 3}
+    isUnlocked: 1
+  - characterController: {fileID: 5227644822463801514, guid: af2e0d4d874134949952510a64fef990, type: 3}
     isUnlocked: 1
 --- !u!1 &772188127
 GameObject:
@@ -1271,8 +1274,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 100}
+  m_SizeDelta: {x: 0, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1339319333
 GameObject:

@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 348f0ce336621514f916dfa32ca2745e, type: 3}
-  m_Name: Player2Data
+  m_Name: Player3Data
   m_EditorClassIdentifier: 
-  characterName: Player2
+  characterName: Player3
   health: 100
   movementSpeed: 4
   hitBoxRadius: 0.4
-  playerIcon: {fileID: 1105089075, guid: 58e8fc2517928984c93de888118dcf76, type: 3}
+  playerIcon: {fileID: -1190303470, guid: 58e8fc2517928984c93de888118dcf76, type: 3}
   defaultWeapons:
   - {fileID: 832084601106929333, guid: eefccfca8a358944083b4427c19b8715, type: 3}

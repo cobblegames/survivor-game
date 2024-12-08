@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [System.Serializable]
-public class UnlockedCharacters: IControllable
+public class UnlockedCharacter: IControllable
 {
     [SerializeField] private PlayerCharacterController characterController;
     [SerializeField] private bool isUnlocked;
@@ -27,14 +27,14 @@ public class UnlockedCharacters: IControllable
 public class PlayerProfile : MonoBehaviour, IControllable
 {
 
-    [SerializeField] private UnlockedCharacters[] unlockedCharacters;
+    [SerializeField] private UnlockedCharacter[] unlockedCharacters;
     private int currentGold;
 
     PlayerCharacterController currentCharacterController;
 
     SaveLoadManager saveLoadManager;
 
-    public UnlockedCharacters[] UnlockedCharacters
+    public UnlockedCharacter[] UnlockedCharacters
     {
         get { return unlockedCharacters; }
     }
