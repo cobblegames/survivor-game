@@ -61,8 +61,10 @@ public class GameController : MonoBehaviour
         if(saveLoadManager.IsProfileLoaded) /// currenly is always true - will change after save / load is implemented
         {
             playerProfile.Initialize(new IControllable[] { saveLoadManager });
-            
-        }else
+            userInterfaceManager.Initialize(new IControllable[] { playerProfile });
+
+        }
+        else
         {
             Debug.LogError("Unable to Load Profile - Panic!");
             // later - start waiting coroutine 
@@ -77,10 +79,7 @@ public class GameController : MonoBehaviour
         playerScript.Initialize(new IControllable[] { spatialGroupManager, userInterfaceManager });
         spatialGroupManager.Initialize(new IControllable[] { playerScript, poolManager });
         poolManager.Initialize(new IControllable[] { spatialGroupManager });
-        cameraController.Initialize(new IControllable[] { playerScript });
-
-
-
+        cameraController.Initialize(new IControllable[] { playerScript });      
     }
 
 }

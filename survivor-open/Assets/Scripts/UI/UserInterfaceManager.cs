@@ -5,15 +5,16 @@ public class UserInterfaceManager : MonoBehaviour, IControllable
 {
     [Header("Main Menu UI")]
 
-    [SerializeField] private Button startButton;
-    [SerializeField] private Transform mainMenuRoot;
+    [SerializeField] private Button startButtonCharacterChoice;
+    [SerializeField] private Button startButtonGameplay;
+    [SerializeField] private RectTransform mainMenuRoot;
     [SerializeField] private CharacterChoiceMain characterChoiceMain;
     
     
     
     [Header ("Gameplay UI")]
 
-    [SerializeField] private Transform gameplayRoot;
+    [SerializeField] private RectTransform gameplayRoot;
     [SerializeField] private ProgressBar healthBar;
     [SerializeField] private ProgressBar experienceBar;
     [SerializeField] private TextMeshProUGUI levelLabel;
@@ -38,21 +39,40 @@ public class UserInterfaceManager : MonoBehaviour, IControllable
 
     private void OnEnable()
     {
-        if (startButton != null)
+        if (startButtonCharacterChoice != null)
         {
-            startButton.onClick.AddListener(Handle_StartButton);
+            startButtonCharacterChoice.onClick.AddListener(Handle_StartGameShowCharacterChoice);
         }
+
+        if (startButtonGameplay != null)
+        {
+            startButtonGameplay.onClick.AddListener(Handle_StartGameplay);
+        }
+
     }
 
     private void OnDisable()
     {
-        if (startButton != null)
+        if (startButtonCharacterChoice != null)
         {
-            startButton.onClick.RemoveListener(Handle_StartButton);
+            startButtonCharacterChoice.onClick.RemoveListener(Handle_StartGameShowCharacterChoice);
+        }
+
+        if (startButtonGameplay != null)
+        {
+            startButtonGameplay.onClick.RemoveListener(Handle_StartGameplay);
         }
     }
 
-    private void Handle_StartButton()
+    private void Handle_StartGameShowCharacterChoice()
+    {
+        startButtonCharacterChoice.gameObject.SetActive(false);
+        CharacterChoiceMain characterChoice = GameObject.Instantiate(characterChoiceMain, mainMenuRoot) as CharacterChoiceMain;
+        characterChoice.Initialize(new IControllable[] { playerProfile, this });
+        startButtonGameplay.gameObject.SetActive(true);
+    }
+
+    private void Handle_StartGameplay()
     {
         GameEvents.DoStartGame();
         if (mainMenuRoot != null)
