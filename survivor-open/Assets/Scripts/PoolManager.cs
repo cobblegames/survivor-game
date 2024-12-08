@@ -34,6 +34,10 @@ public class PoolManager : MonoBehaviour, IControllable
 
     private SpatialGroupManager spatialGroupManager;
 
+    private bool isInitialized = false;
+
+    public bool IsInitialized { get { return isInitialized; } }
+
     public void Initialize(IControllable[] _injectedElements)
     {
         spatialGroupManager = _injectedElements[0] as SpatialGroupManager;
@@ -57,10 +61,17 @@ public class PoolManager : MonoBehaviour, IControllable
 
             poolDictionary.Add(pool.PoolName, objectPool);
         }
+
+        isInitialized = true;   
     }
 
     public GameObject SpawnFromPool(string poolName)
     {
+        if(isInitialized== false)
+        {
+            return null;
+        }
+
         if (!poolDictionary.ContainsKey(poolName))
         {
             Debug.LogError($"Pool with name {poolName} does not exist.");

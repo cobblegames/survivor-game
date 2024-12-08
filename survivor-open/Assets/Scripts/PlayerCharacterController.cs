@@ -59,13 +59,11 @@ public class PlayerCharacterController : MonoBehaviour, IControllable
 
     private void OnEnable()
     {
-        GameEvents.OnDoStartGame += Handle_StartGame;
         GameEvents.OnDoStopGame += Handle_StopGame;
     }
 
     private void OnDisable()
     {
-        GameEvents.OnDoStartGame -= Handle_StartGame;
         GameEvents.OnDoStopGame -= Handle_StopGame;
     }
 
@@ -94,6 +92,8 @@ public class PlayerCharacterController : MonoBehaviour, IControllable
         {
             Debug.LogError("Player Data is missing");
         }
+
+        Handle_StartGame();
     }
 
     private void Handle_StartGame()

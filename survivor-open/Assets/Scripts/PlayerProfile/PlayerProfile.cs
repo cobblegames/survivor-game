@@ -22,10 +22,13 @@ public class UnlockedCharacters
 
 public class PlayerProfile : MonoBehaviour, IControllable
 {
+
     [SerializeField] private UnlockedCharacters[] unlockedCharacters;
     private int currentGold;
 
     PlayerCharacterController currentCharacterController;
+
+    SaveLoadManager saveLoadManager;
 
     public PlayerCharacterController CurrentCharacterController
     {
@@ -36,6 +39,7 @@ public class PlayerProfile : MonoBehaviour, IControllable
 
     public void Initialize(IControllable[] _injectedElements)
     {
+        saveLoadManager = _injectedElements[0] as SaveLoadManager;
         currentCharacterController = unlockedCharacters[0].GameCharacter;
     }
 }

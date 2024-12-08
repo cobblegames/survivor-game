@@ -320,8 +320,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb3059a49d6500c4ba24d086720ba913, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  saveLoadManager: {fileID: 412453246}
   playerProfile: {fileID: 742427954}
-  playerScript: {fileID: 0}
   spatialGroupManager: {fileID: 1344451999}
   userInterfaceManager: {fileID: 521088278}
   poolManager: {fileID: 1421153759}
@@ -350,6 +350,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 412453245}
+  - component: {fileID: 412453246}
   m_Layer: 0
   m_Name: SaveLoadManager
   m_TagString: Untagged
@@ -372,6 +373,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &412453246
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 412453244}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b48d615c237ea04d9019953a07a95a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isProfileLoaded: 1
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -911,7 +925,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   unlockedCharacters:
-  - characterController: {fileID: 5227644822463801514, guid: 6dd6ecfac1a004e4b9791e6154d9cbc9, type: 3}
+  - characterController: {fileID: 5227644822463801514, guid: 43ad2fe783e41de49a96279b523683f0, type: 3}
     isUnlocked: 1
 --- !u!1 &772188127
 GameObject:
@@ -1360,7 +1374,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1361459972
 RectTransform:
   m_ObjectHideFlags: 0

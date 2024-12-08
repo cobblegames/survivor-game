@@ -124,16 +124,23 @@ public class Enemy : MonoBehaviour, IMovable, IControllable
 
     public void KillEnemy()
     {
-        GameObject pickupOBJ = Instantiate(poolManager.SpawnFromPool("exp1"), poolManager.PickupsHolder);
-        Pickable pickup = pickupOBJ.GetComponent<Pickable>();
-        pickup.transform.position = transform.position;
-        pickupOBJ.SetActive(true);
-        pickup.Initialize(new IControllable[] { spatialGroupManager, playerController });
         int batchID = spatialGroupManager.GetBatchIDFromSpatialGroup(spatialGroup);
+        if(poolManager.IsInitialized)
+        {
+            GameObject pickupOBJ = Instantiate(poolManager.SpawnFromPool("exp1"), poolManager.PickupsHolder);
 
-        spatialGroupManager.pickableSpatialGroups[batchID].Add(pickup);
+            if (pickupOBJ != null)
+            {
+                Pickable pickup = pickupOBJ.GetComponent<Pickable>();
+                pickup.transform.position = transform.position;
+                pickupOBJ.SetActive(true);
+                pickup.Initialize(new IControllable[] { spatialGroupManager, playerController });
+                spatialGroupManager.pickableSpatialGroups[batchID].Add(pickup);
+            }
+
+        }
+
         spatialGroupManager.enemySpatialGroups[batchID].Remove(this);
-
         Destroy(gameObject);
     }
 }

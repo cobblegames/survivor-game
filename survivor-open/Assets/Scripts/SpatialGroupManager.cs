@@ -77,20 +77,13 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
     public bool IsInitialized
     { get { return isInitialized; } }
 
-    private void OnEnable()
-    {
-        GameEvents.OnDoStartGame += InitializeBatches;
-    }
-
-    private void OnDisable()
-    {
-        GameEvents.OnDoStartGame -= InitializeBatches;
-    }
-
+   
     public void Initialize(IControllable[] _injectedElements)
     {
         this.playerController = _injectedElements[0] as PlayerCharacterController;
         this.poolManager = _injectedElements[1] as PoolManager;
+
+        InitializeBatches();
     }
 
     private void InitializeBatches()
@@ -159,7 +152,12 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
                 runLogicTimer = 0f;
             }
 
-            SpawnEnemies();
+
+            if (poolManager.IsInitialized)
+            {
+                SpawnEnemies();
+            }
+           
 
             for (int i = 0; i < enemyBatches.Count; i++)
             {
@@ -358,6 +356,7 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
 
         if (enemySpawnTimer > enemySpawnTimerCD && poolManager.EnemyHolder.childCount < spatialData.MaxEnemyCount)
         {
+            
             SpawnEnemy();
 
             enemySpawnTimer = 0f;
@@ -422,20 +421,24 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
         float yVal = Random.Range(centerOfSpatialGroup.y - sizeOfOneSpatialGroup / 2, centerOfSpatialGroup.y + sizeOfOneSpatialGroup / 2);
 
         GameObject enemyGO = Instantiate(poolManager.SpawnFromPool("Skeleton"), poolManager.EnemyHolder);
-        Enemy enemyScript = enemyGO.GetComponent<Enemy>();
-        enemyGO.transform.position = new Vector3(xVal, yVal, 0);
-        enemyGO.SetActive(true);
-        // Spatial group
-        int spatialGroup = GetSpatialGroup(enemyGO.transform.position.x, enemyGO.transform.position.y);
-        enemyScript.SpatialGroup = spatialGroup;
-        enemySpatialGroups[spatialGroup].Add(enemyScript);
-     
+        if(enemyGO != null)
+        {
+            Enemy enemyScript = enemyGO.GetComponent<Enemy>();
+            enemyGO.transform.position = new Vector3(xVal, yVal, 0);
+            enemyGO.SetActive(true);
+            // Spatial group
+            int spatialGroup = GetSpatialGroup(enemyGO.transform.position.x, enemyGO.transform.position.y);
+            enemyScript.SpatialGroup = spatialGroup;
+            enemySpatialGroups[spatialGroup].Add(enemyScript);
 
-        // Batch for update logic
-        enemyScript.BatchID = batchToBeAdded;
-        enemyBatches[batchToBeAdded].Add(enemyScript);
 
-        enemyScript.Initialize(new IControllable[] { this, playerController, poolManager });
+            // Batch for update logic
+            enemyScript.BatchID = batchToBeAdded;
+            enemyBatches[batchToBeAdded].Add(enemyScript);
+
+            enemyScript.Initialize(new IControllable[] { this, playerController, poolManager });
+        }
+      
     }
 
     private Vector2 GetPartitionCenterDynamic(int partition, float mapWidth, float mapHeight, int totalPartitions)
