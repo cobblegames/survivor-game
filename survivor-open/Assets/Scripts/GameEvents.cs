@@ -1,15 +1,31 @@
 public static class GameEvents
 {
-    public static System.Action OnStartGame;
-    public static System.Action OnStopGame;
+    public static System.Action OnDoStartGame;
+    public static System.Action OnDoStopGame;
 
-    public static void StartGame()
+    public static System.Action OnNotifyProfileIsLoaded;
+    public static System.Action OnDoProfileSave;
+
+
+    public static void NotifyProfileIsLoaded()
     {
-        if (OnStartGame != null) OnStartGame.Invoke();
+        if (OnNotifyProfileIsLoaded != null) OnNotifyProfileIsLoaded.Invoke();
     }
 
-    public static void StopGame()
+
+    public static void DoProfileSave()
     {
-        if (OnStopGame != null) OnStopGame.Invoke();
+        if (OnDoProfileSave != null) OnDoProfileSave.Invoke();
+    }
+
+    
+    public static void DoStartGame()
+    {
+        if (OnDoStartGame != null) OnDoStartGame.Invoke();
+    }
+
+    public static void DoStopGame()
+    {
+        if (OnDoStopGame != null) OnDoStopGame.Invoke();
     }
 }

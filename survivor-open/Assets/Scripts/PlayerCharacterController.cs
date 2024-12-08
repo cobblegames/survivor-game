@@ -1,19 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
+
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerController : MonoBehaviour, IControllable
+public class PlayerCharacterController : MonoBehaviour, IControllable
 {
-    [Header("UI Elements")]
-    [SerializeField] private ProgressBar healthBar;
-    [SerializeField] private ProgressBar expBar;
-    [SerializeField] private TextMeshProUGUI levelLabel;
 
     [Header("Drag to Inspector Elements")]
     [SerializeField] private InputActionReference move;
-    [SerializeField] private PlayerData playerData;
+    [SerializeField] private PlayerCharacterData playerData;
+
+    #region Injected Dependencies
+    private SpatialGroupManager spatialGroupManager;
+    private UserInterfaceManager userInterfaceManager;
+    #endregion
 
     #region private variables
 
@@ -23,17 +24,12 @@ public class PlayerController : MonoBehaviour, IControllable
     private float currentCollectionRadius = 1f;
     private int currentLevel = 0;
     private int currentExperience = 0;
-
-    private bool doubleXPGrowth;
-    private SpatialGroupManager spatialGroupManager;
+    private bool doubleXPGrowth;    
     private int spatialGroup = -1;
     private int takeDamageEveryXFrames = 0;
     private int takeDamageEveryXFramesCD = 10;
     private bool gameIsStarted;
-
-    // Nearest enemy position (for weapons)
     private Vector2 nearestEnemyPosition = Vector2.zero;
-
     private bool noNearbyEnemies = false;
     private WaitForEndOfFrame waitForEndOfFrame = new WaitForEndOfFrame();
 
@@ -50,10 +46,10 @@ public class PlayerController : MonoBehaviour, IControllable
         set { nearestEnemyPosition = value; }
     }
 
-    public int SpatialGroup
-    { get { return spatialGroup; } }
+    //public int SpatialGroup
+    //{ get { return spatialGroup; } }
 
-    public bool NoNearbyEnemies
+    public bool NoNearbyEnemies  // for weapons that need enemy targetting
     {
         get { return noNearbyEnemies; }
         set { noNearbyEnemies = value; }
@@ -63,19 +59,22 @@ public class PlayerController : MonoBehaviour, IControllable
 
     private void OnEnable()
     {
-        GameEvents.OnStartGame += Handle_StartGame;
-        GameEvents.OnStopGame += Handle_StopGame;
+        GameEvents.OnDoStartGame += Handle_StartGame;
+        GameEvents.OnDoStopGame += Handle_StopGame;
     }
 
     private void OnDisable()
     {
-        GameEvents.OnStartGame -= Handle_StartGame;
-        GameEvents.OnStopGame -= Handle_StopGame;
+        GameEvents.OnDoStartGame -= Handle_StartGame;
+        GameEvents.OnDoStopGame -= Handle_StopGame;
     }
 
     public void Initialize(IControllable[] _injectedElements)
     {
         this.spatialGroupManager = _injectedElements[0] as SpatialGroupManager;
+        this.userInterfaceManager = _injectedElements[1] as UserInterfaceManager;
+
+
         spatialGroup = spatialGroupManager.GetSpatialGroup(transform.position.x, transform.position.y);
 
         if (playerData != null)
@@ -100,7 +99,8 @@ public class PlayerController : MonoBehaviour, IControllable
     private void Handle_StartGame()
     {
         gameIsStarted = true;
-        healthBar.UpdateBar((float)currentHealth / (float)playerData.Health);
+        userInterfaceManager.HPValue = currentHealth / playerData.Health;
+       
         StartCoroutine(PlayerMainLoop());
     }
 
@@ -278,13 +278,16 @@ public class PlayerController : MonoBehaviour, IControllable
         float expProgression = (float)currentExperience / (float) xpRequired;
 
         Debug.Log("current progression " + expProgression);
-        expBar.UpdateBar(expProgression);
 
+        userInterfaceManager.ExpValue = expProgression;
+      
         if (currentExperience >= xpRequired)
         {
             currentExperience -= xpRequired;
             currentLevel++;
-            levelLabel.text = currentLevel.ToString();
+
+            userInterfaceManager.LevelValue = currentLevel.ToString();
+          
             // Activate double XP growth if reaching level 20 or 40
             if (currentLevel == 20 || currentLevel == 40)
                 doubleXPGrowth = true;
@@ -324,8 +327,8 @@ public class PlayerController : MonoBehaviour, IControllable
     private void ModifyHealth(float amount)
     {
         currentHealth -= amount;
-        healthBar.UpdateBar(currentHealth / playerData.Health);
-
+        userInterfaceManager.HPValue = currentHealth / playerData.Health;
+      
         if (currentHealth <= 0)
         {
             KillPlayer();
@@ -334,6 +337,6 @@ public class PlayerController : MonoBehaviour, IControllable
 
     private void KillPlayer()
     {
-        GameEvents.StopGame();
+        GameEvents.DoStopGame();
     }
 }

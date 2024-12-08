@@ -1,11 +1,37 @@
 using UnityEngine;
 using UnityEngine.UI;
-
-public class UserInterfaceManager : MonoBehaviour
+using TMPro;
+public class UserInterfaceManager : MonoBehaviour, IControllable
 {
+    [Header("Main Menu UI")]
+
     [SerializeField] private Button startButton;
     [SerializeField] private Transform mainMenuRoot;
+    
+    
+    
+    [Header ("Gameplay UI")]
+
     [SerializeField] private Transform gameplayRoot;
+    [SerializeField] private ProgressBar healthBar;
+    [SerializeField] private ProgressBar experienceBar;
+    [SerializeField] private TextMeshProUGUI levelLabel;
+
+
+
+    public float HPValue
+    {        
+        set { healthBar.UpdateBar(value); }
+    }
+    public float ExpValue
+    {
+        set { experienceBar.UpdateBar(value); }
+    }
+
+    public string LevelValue
+    {
+        set { levelLabel.text =  value; }
+    }
 
     private void OnEnable()
     {
@@ -25,7 +51,7 @@ public class UserInterfaceManager : MonoBehaviour
 
     private void Handle_StartButton()
     {
-        GameEvents.StartGame();
+        GameEvents.DoStartGame();
         if (mainMenuRoot != null)
         {
             mainMenuRoot.gameObject.SetActive(false);
@@ -35,5 +61,10 @@ public class UserInterfaceManager : MonoBehaviour
         {
             gameplayRoot.gameObject.SetActive(true);
         }
+    }
+
+    public void Initialize(IControllable[] _injectedElements)
+    {
+       
     }
 }

@@ -3,13 +3,13 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour, IControllable
 {
-    private PlayerController player;
+    private PlayerCharacterController player;
     private WaitForEndOfFrame endOfFrame;
 
     public void Initialize(IControllable[] _injectedElements)
     {
         endOfFrame = new WaitForEndOfFrame();
-        this.player = _injectedElements[0] as PlayerController;
+        this.player = _injectedElements[0] as PlayerCharacterController;
 
         StartCoroutine(MoveCamera());
     }

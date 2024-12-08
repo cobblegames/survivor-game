@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Players/Player Data", fileName = "PlayerData")]
-public class PlayerData : ScriptableObject
+public class PlayerCharacterData : ScriptableObject
 {
     [SerializeField] private float health = 100;
     [SerializeField] private float movementSpeed = 4f;

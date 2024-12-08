@@ -34,13 +34,13 @@ public class Enemy : MonoBehaviour, IMovable, IControllable
     }
 
     protected SpatialGroupManager spatialGroupManager;
-    protected PlayerController playerController;
+    protected PlayerCharacterController playerController;
     protected PoolManager poolManager;
 
     public void Initialize(IControllable[] _injectedElements)
     {
         this.spatialGroupManager = _injectedElements[0] as SpatialGroupManager;
-        this.playerController = _injectedElements[1] as PlayerController;
+        this.playerController = _injectedElements[1] as PlayerCharacterController;
         this.poolManager = _injectedElements[2] as PoolManager;
 
         if (enemyData != null)

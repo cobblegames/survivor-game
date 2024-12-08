@@ -9,7 +9,7 @@ public class WeaponData : ScriptableObject
     [SerializeField] private int maxTargets;
     [SerializeField] private int baseBulletCount;
     [SerializeField] private float range;
-
+    [SerializeField] private Sprite uiIcon;
     public string WeaponName
     { get { return weaponName; } }
 
@@ -27,4 +27,7 @@ public class WeaponData : ScriptableObject
 
     public float Range
     { get { return range; } }
+
+    public Sprite UiIcon
+    { get { return uiIcon; } }
 }

@@ -2,22 +2,20 @@ using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
-    [SerializeField] private PlayerController playerScript;
+
+    [SerializeField] private PlayerProfile playerProfile;
+    [SerializeField] private PlayerCharacterController playerScript;
     [SerializeField] private SpatialGroupManager spatialGroupManager;
+    [SerializeField] private UserInterfaceManager userInterfaceManager;
     [SerializeField] private PoolManager poolManager;
     [SerializeField] private CameraController cameraController;
 
-    public PlayerController PlayerScript
-    { get { return playerScript; } }
-
-    public SpatialGroupManager SpatialGroupManager
-    { get { return spatialGroupManager; } }
 
     private void Start()
     {
-        if (!playerScript)
+        if (!playerProfile)
         {
-            Debug.LogError("No player object");
+            Debug.LogError("No player profile object");
             return;
         }
 
@@ -41,7 +39,9 @@ public class GameController : MonoBehaviour
 
         //Injecting dependencies to critical components
 
-        playerScript.Initialize(new IControllable[] { spatialGroupManager });
+        playerScript = playerProfile.CurrentCharacterController;
+
+        playerScript.Initialize(new IControllable[] { spatialGroupManager, userInterfaceManager });
         spatialGroupManager.Initialize(new IControllable[] { playerScript, poolManager });
         poolManager.Initialize(new IControllable[] { spatialGroupManager });
         cameraController.Initialize(new IControllable[] { playerScript });

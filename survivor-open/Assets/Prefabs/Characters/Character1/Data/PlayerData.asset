@@ -9,11 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3878b44a16a20c34c912d2c6c3fb6b39, type: 3}
+  m_Script: {fileID: 11500000, guid: 348f0ce336621514f916dfa32ca2745e, type: 3}
   m_Name: PlayerData
   m_EditorClassIdentifier: 
   health: 100
   movementSpeed: 4
-  hitBoxRadius: 0.5
+  hitBoxRadius: 0.4
   defaultWeapons:
   - {fileID: 832084601106929333, guid: eefccfca8a358944083b4427c19b8715, type: 3}

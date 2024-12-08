@@ -4,14 +4,14 @@ public class Pickable : MonoBehaviour, IControllable, IMovable
 {
     [SerializeField] protected PickableData _data;
     protected SpatialGroupManager spatialGroupManager;
-    protected PlayerController playerController;
+    protected PlayerCharacterController playerController;
 
     [SerializeField] protected bool magnetIsOn = false;
     [SerializeField] protected float currentSpeed = 0.2f;
     public virtual void Initialize(IControllable[] _injectedElements)
     {
         spatialGroupManager = _injectedElements[0] as SpatialGroupManager;
-        playerController = _injectedElements[1] as PlayerController;
+        playerController = _injectedElements[1] as PlayerCharacterController;
     }
 
     public void IntervalLogic()

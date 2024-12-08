@@ -68,7 +68,7 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
     private int HALF_WIDTH_STATIC;
     private int HALF_HEIGHT_STATIC;
 
-    private PlayerController playerController;
+    private PlayerCharacterController playerController;
     private PoolManager poolManager;
     private WaitForEndOfFrame waitForEndOfFrame = new WaitForEndOfFrame();
 
@@ -79,17 +79,17 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
 
     private void OnEnable()
     {
-        GameEvents.OnStartGame += InitializeBatches;
+        GameEvents.OnDoStartGame += InitializeBatches;
     }
 
     private void OnDisable()
     {
-        GameEvents.OnStartGame -= InitializeBatches;
+        GameEvents.OnDoStartGame -= InitializeBatches;
     }
 
     public void Initialize(IControllable[] _injectedElements)
     {
-        this.playerController = _injectedElements[0] as PlayerController;
+        this.playerController = _injectedElements[0] as PlayerCharacterController;
         this.poolManager = _injectedElements[1] as PoolManager;
     }
 
