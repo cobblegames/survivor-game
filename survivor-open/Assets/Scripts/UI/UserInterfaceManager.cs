@@ -7,6 +7,7 @@ public class UserInterfaceManager : MonoBehaviour, IControllable
 
     [SerializeField] private Button startButton;
     [SerializeField] private Transform mainMenuRoot;
+    [SerializeField] private CharacterChoiceMain characterChoiceMain;
     
     
     
@@ -17,8 +18,10 @@ public class UserInterfaceManager : MonoBehaviour, IControllable
     [SerializeField] private ProgressBar experienceBar;
     [SerializeField] private TextMeshProUGUI levelLabel;
 
+    #region Injectables
+    private PlayerProfile playerProfile;
 
-
+    #endregion
     public float HPValue
     {        
         set { healthBar.UpdateBar(value); }
@@ -65,6 +68,6 @@ public class UserInterfaceManager : MonoBehaviour, IControllable
 
     public void Initialize(IControllable[] _injectedElements)
     {
-       
+        playerProfile = _injectedElements[0] as PlayerProfile ;
     }
 }

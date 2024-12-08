@@ -671,6 +671,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   startButton: {fileID: 580062237}
   mainMenuRoot: {fileID: 1807433389}
+  characterChoiceMain: {fileID: 1904320899330241567, guid: 6c32d7ee998c821418635fa16cbc27e6, type: 3}
   gameplayRoot: {fileID: 1361459972}
   healthBar: {fileID: 1940060292}
   experienceBar: {fileID: 519486054}
@@ -693,7 +694,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &580062236
 RectTransform:
   m_ObjectHideFlags: 0
@@ -926,6 +927,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   unlockedCharacters:
   - characterController: {fileID: 5227644822463801514, guid: 43ad2fe783e41de49a96279b523683f0, type: 3}
+    isUnlocked: 1
+  - characterController: {fileID: 5227644822463801514, guid: 6dd6ecfac1a004e4b9791e6154d9cbc9, type: 3}
     isUnlocked: 1
 --- !u!1 &772188127
 GameObject:
@@ -1229,6 +1232,41 @@ RectTransform:
   - {fileID: 519486051}
   - {fileID: 1576121235}
   m_Father: {fileID: 1361459972}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &1231055188
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1231055189}
+  m_Layer: 5
+  m_Name: WindowsRoot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1231055189
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1231055188}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1807433389}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -1616,6 +1654,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 580062236}
+  - {fileID: 1231055189}
   m_Father: {fileID: 772188131}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
