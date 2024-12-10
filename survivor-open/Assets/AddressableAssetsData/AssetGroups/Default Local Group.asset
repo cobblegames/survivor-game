@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Default Local Group
+  m_EditorClassIdentifier: 
+  m_GroupName: Default Local Group
+  m_GUID: a3e1cbfcbfb4d0641b9d75de13b5b0ae
+  m_SerializeEntries:
+  - m_GUID: 3159be499fc08e64b836271473c4dd5b
+    m_Address: Assets/Prefabs/Enemy/Skeleton.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 43ad2fe783e41de49a96279b523683f0
+    m_Address: Assets/Prefabs/Characters/Character2/Player2.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6dd6ecfac1a004e4b9791e6154d9cbc9
+    m_Address: Assets/Prefabs/Characters/Character1/Player1.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 73650ff7aaffd6a46b13909fb44b2319
+    m_Address: Assets/Prefabs/Pickables/ExpGem1/ExpGem1.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: af2e0d4d874134949952510a64fef990
+    m_Address: Assets/Prefabs/Characters/Character3/Player3.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 3ec786e66ff8326408c4116eb40107c1, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 5efe657f7bd60794bb5cf8f88992b115, type: 2}
+    - {fileID: 11400000, guid: b2fe0e8c7213cef4d90374d31179bba2, type: 2}
