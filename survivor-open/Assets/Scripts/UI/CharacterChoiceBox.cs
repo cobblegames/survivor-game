@@ -9,12 +9,12 @@ public class CharacterChoiceBox : PopUpWindow
     [SerializeField] private TextMeshProUGUI characterName;
     [SerializeField] private GameObject highlightElement;
 
-
     #region Injectables
-    UnlockedCharacter unlockedCharacter;
-    CharacterChoiceMain mainChoiceMain;
-    #endregion
 
+    private UnlockedCharacter unlockedCharacter;
+    private CharacterChoiceMain mainChoiceMain;
+
+    #endregion Injectables
 
     public GameObject HighlightElement
     {
@@ -38,13 +38,11 @@ public class CharacterChoiceBox : PopUpWindow
         highlightElement.SetActive(false);
     }
 
-
     public override void OnPointerDown(PointerEventData eventData)
     {
         base.OnPointerDown(eventData);
-        
+
         highlightElement.SetActive(true);
         mainChoiceMain.MakeChoice(unlockedCharacter);
     }
-
 }

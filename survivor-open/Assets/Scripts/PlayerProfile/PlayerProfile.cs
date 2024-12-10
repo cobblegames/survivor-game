@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [System.Serializable]
-public class UnlockedCharacter: IControllable
+public class UnlockedCharacter : IControllable
 {
     [SerializeField] private PlayerCharacterController characterController;
     [SerializeField] private bool isUnlocked;
@@ -9,7 +9,7 @@ public class UnlockedCharacter: IControllable
 
     public PlayerCharacterController GameCharacter
     {
-        get { return characterController; }    
+        get { return characterController; }
     }
 
     public bool IsUnlocked
@@ -20,19 +20,17 @@ public class UnlockedCharacter: IControllable
 
     public void Initialize(IControllable[] _injectedElements)
     {
-        
     }
 }
 
 public class PlayerProfile : MonoBehaviour, IControllable
 {
-
     [SerializeField] private UnlockedCharacter[] unlockedCharacters;
     private int currentGold;
 
-    PlayerCharacterController currentCharacterController;
+    private PlayerCharacterController currentCharacterController;
 
-    SaveLoadManager saveLoadManager;
+    private SaveLoadManager saveLoadManager;
 
     public UnlockedCharacter[] UnlockedCharacters
     {
@@ -44,7 +42,6 @@ public class PlayerProfile : MonoBehaviour, IControllable
         get { return currentCharacterController; }
         set { currentCharacterController = value; }
     }
-
 
     public void Initialize(IControllable[] _injectedElements)
     {

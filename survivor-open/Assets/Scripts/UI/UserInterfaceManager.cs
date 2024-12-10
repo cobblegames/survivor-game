@@ -1,33 +1,35 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
+
 public class UserInterfaceManager : MonoBehaviour, IControllable
 {
     [Header("Main Menu UI")]
-
     [SerializeField] private Button startButtonCharacterChoice;
+
     [SerializeField] private Button startButtonGameplay;
     [SerializeField] private RectTransform mainMenuRoot;
     [SerializeField] private RectTransform windowsRoot;
     [SerializeField] private CharacterChoiceMain characterChoiceMain;
-    
-    
-    
-    [Header ("Gameplay UI")]
 
+    [Header("Gameplay UI")]
     [SerializeField] private RectTransform gameplayRoot;
+
     [SerializeField] private ProgressBar healthBar;
     [SerializeField] private ProgressBar experienceBar;
     [SerializeField] private TextMeshProUGUI levelLabel;
 
     #region Injectables
+
     private PlayerProfile playerProfile;
 
-    #endregion
+    #endregion Injectables
+
     public float HPValue
-    {        
+    {
         set { healthBar.UpdateBar(value); }
     }
+
     public float ExpValue
     {
         set { experienceBar.UpdateBar(value); }
@@ -35,7 +37,7 @@ public class UserInterfaceManager : MonoBehaviour, IControllable
 
     public string LevelValue
     {
-        set { levelLabel.text =  value; }
+        set { levelLabel.text = value; }
     }
 
     private void OnEnable()
@@ -49,7 +51,6 @@ public class UserInterfaceManager : MonoBehaviour, IControllable
         {
             startButtonGameplay.onClick.AddListener(Handle_StartGameplay);
         }
-
     }
 
     private void OnDisable()
@@ -89,6 +90,6 @@ public class UserInterfaceManager : MonoBehaviour, IControllable
 
     public void Initialize(IControllable[] _injectedElements)
     {
-        playerProfile = _injectedElements[0] as PlayerProfile ;
+        playerProfile = _injectedElements[0] as PlayerProfile;
     }
 }

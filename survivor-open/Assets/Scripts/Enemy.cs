@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 public class Enemy : MonoBehaviour, IMovable, IControllable
 {
@@ -125,7 +124,7 @@ public class Enemy : MonoBehaviour, IMovable, IControllable
     public void KillEnemy()
     {
         int batchID = spatialGroupManager.GetBatchIDFromSpatialGroup(spatialGroup);
-        if(poolManager.IsInitialized)
+        if (poolManager.IsInitialized)
         {
             GameObject pickupOBJ = Instantiate(poolManager.SpawnFromPool("exp1"), poolManager.PickupsHolder);
 
@@ -137,7 +136,6 @@ public class Enemy : MonoBehaviour, IMovable, IControllable
                 pickup.Initialize(new IControllable[] { spatialGroupManager, playerController });
                 spatialGroupManager.pickableSpatialGroups[batchID].Add(pickup);
             }
-
         }
 
         spatialGroupManager.enemySpatialGroups[batchID].Remove(this);

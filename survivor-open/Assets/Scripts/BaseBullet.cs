@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Diagnostics;
 
 public class BaseBullet : MonoBehaviour, IControllable, IBullet
 {
@@ -30,7 +29,7 @@ public class BaseBullet : MonoBehaviour, IControllable, IBullet
         inheritedDamage = parentWeapon.CurrentDamage;
         inheritedMaxTargets = parentWeapon.CurrentMaxTargets;
         inheritedRange = parentWeapon.CurrentRange;
- 
+
         StartCoroutine(MainBulletLoop());
     }
 
@@ -50,11 +49,10 @@ public class BaseBullet : MonoBehaviour, IControllable, IBullet
     }
 
     public virtual void CheckCollisionWithEnemy()
-    {      
+    {
         surroundingSpatialGroups = spatialGroupManager.GetExpandedSpatialGroups(spatialGroup, transform.forward);
         List<Enemy> surroundingEnemies = spatialGroupManager.GetAllItemsInSpatialGroups<Enemy>(surroundingSpatialGroups, spatialGroupManager.enemySpatialGroups);
 
- 
         foreach (Enemy enemy in surroundingEnemies)
         {
             if (enemy == null)
@@ -63,10 +61,8 @@ public class BaseBullet : MonoBehaviour, IControllable, IBullet
                 continue;
             }
 
-          
             if (CheckHitBox(enemy))
             {
-              
                 DoAttack(enemy);
             }
             else

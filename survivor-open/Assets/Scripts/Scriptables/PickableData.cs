@@ -8,6 +8,7 @@ public class PickableData : ScriptableObject
 
     public float HitBoxRadius
     { get { return hitBoxRadius; } }
+
     public float CollectionRadius
     { get { return collectionRadius; } }
 }

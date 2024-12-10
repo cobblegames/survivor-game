@@ -37,8 +37,8 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
 
     // Enemy logic
     private Dictionary<int, List<Enemy>> enemyBatches = new Dictionary<int, List<Enemy>>();
+
     public Dictionary<int, List<Pickable>> pickableBatches = new Dictionary<int, List<Pickable>>();
-     
 
     public Dictionary<int, HashSet<Enemy>> enemySpatialGroups = new Dictionary<int, HashSet<Enemy>>();
     public Dictionary<int, HashSet<BaseBullet>> bulletSpatialGroups = new Dictionary<int, HashSet<BaseBullet>>();
@@ -77,7 +77,6 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
     public bool IsInitialized
     { get { return isInitialized; } }
 
-   
     public void Initialize(IControllable[] _injectedElements)
     {
         this.playerController = _injectedElements[0] as PlayerCharacterController;
@@ -112,7 +111,6 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
             batchScoreMap_Enemy.Add(i, batchScore); // batch scores
             batchQueue_Enemy.Add(batchScore); // batch queue
 
-
             pickableBatches.Add(i, new List<Pickable>()); // pickable batches
         }
 
@@ -134,10 +132,10 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
 
         isInitialized = true;
 
-        StartCoroutine(SpatialManagerMainCoroutiune());
+        StartCoroutine(SpatialManagerMainCoroutine());
     }
 
-    private IEnumerator SpatialManagerMainCoroutiune()
+    private IEnumerator SpatialManagerMainCoroutine()
     {
         while (playerController != null)
         {
@@ -152,12 +150,10 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
                 runLogicTimer = 0f;
             }
 
-
             if (poolManager.IsInitialized)
             {
                 SpawnEnemies();
             }
-           
 
             for (int i = 0; i < enemyBatches.Count; i++)
             {
@@ -184,13 +180,11 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
         // Run logic for all enemies in batch
         foreach (Enemy enemy in enemyBatches[batchID])
         {
-        
             if (enemy) enemy.EveryFrameLogic();
             else Debug.Log("Enemy is null");
         }
 
-       
-        if(pickableSpatialGroups != null)
+        if (pickableSpatialGroups != null)
         {
             foreach (Pickable pickable in pickableSpatialGroups[batchID])
             {
@@ -204,16 +198,12 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
                     Debug.Log("Pickable is null or inactive.");
                 }
             }
-        }else
+        }
+        else
         {
             Debug.Log("pickableSpatialGroups count is NULL");
         }
-
-       
-
     }
-
-
 
     public List<T> GetAllItemsInSpatialGroups<T>(List<int> spatialGroups, Dictionary<int, HashSet<T>> spatialGroupsDictionary)
     {
@@ -248,12 +238,9 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
         return batchID;
     }
 
-
     public List<int> GetExpandedSpatialGroups(int spatialGroup, Vector2 direction)
     {
         List<int> expandedSpatialGroups = new List<int>() { GetBatchIDFromSpatialGroup(spatialGroup) };
-
-      
 
         bool goingRight = direction.x > 0;
         bool goingTop = direction.y > 0;
@@ -356,7 +343,6 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
 
         if (enemySpawnTimer > enemySpawnTimerCD && poolManager.EnemyHolder.childCount < spatialData.MaxEnemyCount)
         {
-            
             SpawnEnemy();
 
             enemySpawnTimer = 0f;
@@ -421,7 +407,7 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
         float yVal = Random.Range(centerOfSpatialGroup.y - sizeOfOneSpatialGroup / 2, centerOfSpatialGroup.y + sizeOfOneSpatialGroup / 2);
 
         GameObject enemyGO = Instantiate(poolManager.SpawnFromPool("Skeleton"), poolManager.EnemyHolder);
-        if(enemyGO != null)
+        if (enemyGO != null)
         {
             Enemy enemyScript = enemyGO.GetComponent<Enemy>();
             enemyGO.transform.position = new Vector3(xVal, yVal, 0);
@@ -431,14 +417,12 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
             enemyScript.SpatialGroup = spatialGroup;
             enemySpatialGroups[spatialGroup].Add(enemyScript);
 
-
             // Batch for update logic
             enemyScript.BatchID = batchToBeAdded;
             enemyBatches[batchToBeAdded].Add(enemyScript);
 
             enemyScript.Initialize(new IControllable[] { this, playerController, poolManager });
         }
-      
     }
 
     private Vector2 GetPartitionCenterDynamic(int partition, float mapWidth, float mapHeight, int totalPartitions)
@@ -464,7 +448,6 @@ public class SpatialGroupManager : MonoBehaviour, IControllable
 
     private void AddToEnemySpatialGroup(int spatialGroupID, Enemy enemy)
     {
-     
     }
 
     public void RemoveFromSpatialGroup(int spatialGroupID, Enemy enemy)

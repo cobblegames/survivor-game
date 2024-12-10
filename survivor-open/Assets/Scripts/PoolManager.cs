@@ -1,23 +1,24 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum PoolObjectType {Enemy = 0, Pickable = 1}
+public enum PoolObjectType
+{ Enemy = 0, Pickable = 1 }
 
 public class PoolManager : MonoBehaviour, IControllable
 {
     [System.Serializable]
     public class Pool
     {
+        [SerializeField] private string poolName; // Identifier for the pool
+        [SerializeField] private GameObject prefab; // Enemy prefab
+        [SerializeField] private PoolObjectType poolObject;
 
-        
-        [SerializeField]    private string poolName; // Identifier for the pool
-        [SerializeField]    private GameObject prefab; // Enemy prefab
-        [SerializeField]    private PoolObjectType poolObject;
-
-        public string PoolName { get { return poolName; } }
-        public GameObject Prefab { get { return prefab; } }
-        public PoolObjectType PoolObject { get { return poolObject; } }
-
+        public string PoolName
+        { get { return poolName; } }
+        public GameObject Prefab
+        { get { return prefab; } }
+        public PoolObjectType PoolObject
+        { get { return poolObject; } }
     }
 
     [SerializeField] private List<Pool> pools;
@@ -29,14 +30,17 @@ public class PoolManager : MonoBehaviour, IControllable
     [SerializeField] private Transform enemyHolder;
     [SerializeField] private Transform pickupsHolder;
 
-    public Transform EnemyHolder { get { return enemyHolder; } }
-    public Transform PickupsHolder { get { return pickupsHolder; } }
+    public Transform EnemyHolder
+    { get { return enemyHolder; } }
+    public Transform PickupsHolder
+    { get { return pickupsHolder; } }
 
     private SpatialGroupManager spatialGroupManager;
 
     private bool isInitialized = false;
 
-    public bool IsInitialized { get { return isInitialized; } }
+    public bool IsInitialized
+    { get { return isInitialized; } }
 
     public void Initialize(IControllable[] _injectedElements)
     {
@@ -62,12 +66,12 @@ public class PoolManager : MonoBehaviour, IControllable
             poolDictionary.Add(pool.PoolName, objectPool);
         }
 
-        isInitialized = true;   
+        isInitialized = true;
     }
 
     public GameObject SpawnFromPool(string poolName)
     {
-        if(isInitialized== false)
+        if (isInitialized == false)
         {
             return null;
         }

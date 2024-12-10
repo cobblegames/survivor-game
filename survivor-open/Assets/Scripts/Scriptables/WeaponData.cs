@@ -10,6 +10,7 @@ public class WeaponData : ScriptableObject
     [SerializeField] private int baseBulletCount;
     [SerializeField] private float range;
     [SerializeField] private Sprite uiIcon;
+
     public string WeaponName
     { get { return weaponName; } }
 

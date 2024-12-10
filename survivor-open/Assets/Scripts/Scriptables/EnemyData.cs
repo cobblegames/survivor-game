@@ -15,5 +15,4 @@ public class EnemyData : ScriptableObject
 
     public float MovementSpeed
     { get { return movementSpeed; } }
-
 }

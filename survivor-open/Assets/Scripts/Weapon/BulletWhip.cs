@@ -11,12 +11,10 @@ public class BulletWhip : BaseBullet
         hitBoxSize.localScale = squareHitbox;
     }
 
-
-
     protected override bool CheckHitBox(Enemy _enemy)
     {
         Vector2 adjustedSquareHitbox = new Vector2(squareHitbox.x * transform.lossyScale.x, squareHitbox.y * transform.lossyScale.y);
-      
+
         float halfWidth = adjustedSquareHitbox.x / 2f;
         float halfHeight = adjustedSquareHitbox.y / 2f;
 
@@ -26,11 +24,9 @@ public class BulletWhip : BaseBullet
         float bottomBound = transform.position.y - halfHeight;
         float topBound = transform.position.y + halfHeight;
 
-
         bool result = _enemy.transform.position.x >= leftBound && _enemy.transform.position.x <= rightBound &&
         _enemy.transform.position.y >= bottomBound && _enemy.transform.position.y <= topBound;
 
-      
         // Check if the position is within the bounds
         return result;
     }

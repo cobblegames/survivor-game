@@ -8,6 +8,7 @@ public class Pickable : MonoBehaviour, IControllable, IMovable
 
     [SerializeField] protected bool magnetIsOn = false;
     [SerializeField] protected float currentSpeed = 0.2f;
+
     public virtual void Initialize(IControllable[] _injectedElements)
     {
         spatialGroupManager = _injectedElements[0] as SpatialGroupManager;
@@ -16,7 +17,6 @@ public class Pickable : MonoBehaviour, IControllable, IMovable
 
     public void IntervalLogic()
     {
-       
     }
 
     public void EveryFrameLogic()
@@ -32,7 +32,5 @@ public class Pickable : MonoBehaviour, IControllable, IMovable
 
     public virtual void Handle_GivePickupBonus()
     {
-       
     }
-
 }
