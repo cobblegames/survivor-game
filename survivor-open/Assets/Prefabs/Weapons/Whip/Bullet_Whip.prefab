@@ -98,7 +98,7 @@ GameObject:
   - component: {fileID: 3109506408553871634}
   - component: {fileID: 4959633845073677279}
   m_Layer: 0
-  m_Name: WhipBullet
+  m_Name: Bullet_Whip
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

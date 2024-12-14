@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public enum PoolObjectType
-{ Enemy = 0, Pickable = 1 }
+{ Enemy = 0, Pickable = 1, Bullet = 2 }
 
 public class PoolManager : MonoBehaviour, IControllable
 {
